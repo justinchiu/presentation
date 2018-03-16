@@ -1,0 +1,660 @@
+\documentclass{beamer}
+% \mode<presentation>
+\setbeamertemplate{navigation symbols}{}
+\let\tempone\itemize
+\let\temptwo\enditemize
+\renewenvironment{itemize}{\tempone\addtolength{\itemsep}{0.5\baselineskip}}{\temptwo}
+\usepackage{beamerthemeshadow}
+\usepackage[normalem]{ulem}
+\usepackage{tikz}
+\usepackage{tikz-dependency}
+\usetikzlibrary{shapes.arrows}
+
+\tikzset{
+    myarrow/.style={
+        draw,
+        fill=gray,
+        single arrow,
+        minimum height=3.5ex,
+        single arrow head extend=1ex
+    }
+}
+\newcommand{\arrowup}{%
+\tikz [baseline=-0.5ex]{\node [myarrow,rotate=90] {};}
+}
+\newcommand{\arrowdown}{%
+\tikz [baseline=-1ex]{\node [myarrow,rotate=-90] {};}
+}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{pgffor}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage{tabularx}
+\usepackage{tikz,etoolbox}
+\usepackage{tikz,amsmath,siunitx}
+\usetikzlibrary{arrows,snakes,backgrounds,patterns,matrix,shapes,fit,calc,shadows,plotmarks}
+
+\usepackage{subcaption}
+% \usepackage{url}
+% \usepackage{hyperref}
+\usepackage{pgf}
+\usepackage{latexsym}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[noend]{algpseudocode}
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage[absolute,overlay]{textpos}
+\usetikzlibrary{shapes,arrows,positioning,automata,positioning,spy,matrix,scopes,chains}
+\newcommand{\digs}[2]{\hphantom{999}\llap{#1}\,+\,\hphantom{999}\llap{#2}}
+\setbeamersize{text margin left=6mm}
+\setbeamersize{text margin right=6mm}
+\renewcommand{\insertnavigation}[1]{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{}
+\usefonttheme{professionalfonts}
+\setbeamercovered{transparent}
+\mode<presentation>
+\linespread{1.25}
+\DeclareMathOperator{\Tr}{Tr} 
+
+\usepackage{color}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage[all,dvips]{xy}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{framed}
+\usepackage{natbib}
+\usepackage[labelformat=empty]{caption}
+\newcommand{\air}{\vspace{0.25cm}}
+\newcommand{\mair}{\vspace{-0.25cm}}
+\DeclareMathOperator{\KL}{KL} 
+\DeclareMathOperator{\JSD}{JSD} 
+\setbeamertemplate{navigation symbols}{}%remove navigation symbols
+\renewcommand{\rmdefault}{crm}
+\newcommand{\lnbrack}{{\normalfont [}}
+\newcommand{\rnbrack}{{\normalfont ]}\thinspace}
+\newcommand{\lbbrack}{\textcolor{red}{\textbf{[}}}
+\newcommand{\rbbrack}{\textcolor{red}{\textbf{]}}\thinspace}
+\definecolor{vermillion}{RGB}{213,94,0}
+\newcommand{\given}{\,|\,}
+\definecolor{orange}{RGB}{230,159,0}
+\definecolor{skyblue}{RGB}{86,180,233}
+\definecolor{bluegreen}{RGB}{90,143,41}
+% \definecolor{bluegreen}{RGB}{0,158,115}
+\definecolor{myyellow}{RGB}{240,228,66} % i dunno if this is the same as standard yellow
+\definecolor{myblue}{RGB}{0,114,178}
+\definecolor{vermillion}{RGB}{213,94,0}
+\definecolor{redpurple}{RGB}{204,121,167}
+\definecolor{lightgrey}{RGB}{234,234,234}
+
+\newcommand{\ha}{\boldh_{\ua}}
+\newcommand{\hp}{\boldh_{\up}}
+\newcommand{\pgrad}{\nabla_{p}^\mathcal{L}}
+
+\newcommand{\todoy}[1]{\textcolor{red}{Fix me (yoon): #1}}
+\newcommand{\todos}[1]{\textcolor{red}{Fix me (sasha): #1}}
+
+\newcommand{\hc}{\boldh_{\mathrm{c}}}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\logadd}{logadd}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\signexp}{signexp}
+\DeclareMathOperator{\sigmoid}{sigmoid}
+\DeclareMathOperator{\fwdbwd}{ForwardBackward}
+\DeclareMathOperator{\softparent}{soft-parent}
+\DeclareMathOperator{\parent}{parent}
+\DeclareMathOperator{\head}{head}
+\DeclareMathOperator{\softhead}{soft-head}
+\DeclareMathOperator{\simf}{sim}
+\DeclareMathOperator{\NN}{NNet}
+\DeclareMathOperator{\attn}{Attn}
+\DeclareMathOperator{\relu}{ReLU}
+\DeclareMathOperator{\lstm}{LSTM}
+\DeclareMathOperator{\rnn}{RNN}
+\DeclareMathOperator{\mlp}{MLP}
+
+
+
+\usetikzlibrary{positioning}
+% \setbeamerfont{alerted text}{series=\bfseries}
+% \setbeamerfont{structure}{series=\bfseries}
+% Needed for diakgrams.
+\def\im#1#2{
+  \node(#1) [scale=#2]{\pgfbox[center,top]{\pgfuseimage{#1}}
+};}
+% \input{pictures_header}
+
+
+\title[latent]{Generative Adversarial Networks}
+
+\author[Yoon Kim]{February 22, 2018}
+\institute[Harvard SEAS]{ 
+{ }
+
+ % Code: \textbf{https://github.com/harvardnlp/struct-attn}}
+% \vspace{5mm}
+
+% \hspace{-70mm} $^*$Equal Contribution
+}
+\date{}
+% \usetheme{Madrid}
+\definecolor{darkgreen}{rgb}{0.13, 0.55, 0.13}
+\definecolor{darkpurple}{rgb}{0.55, 0.0, 0.55}
+
+\newcommand{\enc}{\mathrm{src}}
+
+\newcommand{\yvec}{\mathbf{y}}
+\newcommand{\tvec}{\mathbf{t}}
+\newcommand{\wvec}{\mathbf{w}}
+\renewcommand{\c}{\mathbf{c}}
+\newcommand{\zvec}{\mathbf{z}}
+\newcommand{\E}{\mathbbm{E}}
+
+\newcommand{\mcD}{\mathcal{D}}
+
+% \newcommand{\mcY}{\mathcal{Y}}
+% \newcommand{\mcV}{\mathcal{V}}
+\newcommand{\context}{\mathbf{w}_{\mathrm{c}}}
+\newcommand{\embcontext}{\mathbf{\tilde{w}}_{\mathrm{c}}}
+\newcommand{\inpcontext}{\mathbf{\tilde{x}}}
+\newcommand{\start}{\mathbf{\tilde{y}}_{\mathrm{c0}}}
+\newcommand{\End}{\mathrm{\texttt{</s>}}}
+
+\newcommand{\Uvec}{\mathbf{U}}
+\newcommand{\Evec}{\mathbf{E}}
+\newcommand{\Gvec}{\mathbf{G}}
+\newcommand{\Fvec}{\mathbf{F}}
+\newcommand{\Pvec}{\mathbf{P}}
+\newcommand{\pvec}{\mathbf{p}}
+\newcommand{\q}{\mathbf{Q}}
+\newcommand{\Vvec}{\mathbf{V}}
+\newcommand{\Wvec}{\mathbf{W}}
+\newcommand{\h}{\mathbf{h}}
+% \newcommand{\reals}{\mathbb{R}}
+
+\newcommand{\Cite}[1]{{\footnotesize \citep{#1}}}
+\newcommand{\TT}[1]{{\footnotesize\tt{#1}}}
+\newcommand{\roplus}{{\color{red} \bigoplus}}
+\newcommand{\rotimes}{{\color{red} \,\otimes\,}}
+
+\newcommand{\boldw}{\boldsymbol{w}}
+\newcommand{\xvec}{\mathbf{x}}
+
+\newcommand{\boldu}{\boldsymbol{u}}
+\newcommand{\boldv}{\boldsymbol{v}}
+\newcommand{\boldb}{\boldsymbol{b}}
+\newcommand{\boldW}{\boldsymbol{W}}
+\newcommand{\boldh}{\boldsymbol{h}}
+\newcommand{\boldg}{\boldsymbol{g}}
+\newcommand{\ua}{\ensuremath{\mathrm{a}}}
+\newcommand{\up}{\ensuremath{\mathrm{p}}}
+%\newcommand{\bphi}{\ensuremath{\mathbf{\phi}}}
+\newcommand{\bphi}{\boldsymbol{\phi}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\mcY}{\mathcal{Y}}
+\newcommand{\mcX}{\mathcal{X}}
+\newcommand{\mcC}{\mathcal{C}}
+\newcommand{\mcA}{\mathcal{A}}
+\newcommand{\mcV}{\mathcal{V}}
+\newcommand{\trans}{\ensuremath{\mathsf{T}}}
+\def\argmin{\operatornamewithlimits{arg\,min}}
+\def\argmax{\operatornamewithlimits{arg\,max}}
+\newcommand{\reals}{\ensuremath{\mathbb{R}}}
+
+\newcommand{\aphi}{\boldsymbol{\phi}_{\mathrm{a}}}
+\newcommand{\pwphi}{\boldsymbol{\phi}_{\mathrm{p}}}
+\newcommand{\squigaphi}{\widetilde{\boldsymbol{\phi}}_{\mathrm{a}}}
+\newcommand{\squigpwphi}{\widetilde{\boldsymbol{\phi}}_{\mathrm{p}}}
+
+\newcommand{\aW}{\boldW_{\mathrm{\ua}}}
+\newcommand{\pW}{\boldW_{\mathrm{\up}}}
+
+\newcommand{\ab}{\boldb_{\mathrm{\ua}}}
+\newcommand{\pb}{\boldb_{\mathrm{\up}}}
+
+\newcommand{\Da}{d_{\mathrm{a}}}
+\newcommand{\Dp}{d_{\mathrm{p}}}
+
+\newcommand{\ourmodel}{This work}
+\newcommand{\zro}{{\color{white}0}}
+\AtBeginSection[]
+{
+  \begin{frame}
+  \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}
+  \tableofcontents[currentsubsection]
+  \end{frame}
+}
+
+
+\def\argmax{\operatornamewithlimits{arg\,max}}
+\def\kargmax{\operatornamewithlimits{K-arg\,max}}
+\setbeamercovered{transparent}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \tableofcontents
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+\structure{VAE Application}
+\end{center}
+\url{http://www.dpkingma.com/sgvb_mnist_demo/demo.html}
+\end{frame}
+
+\section{Adversarial Learning}
+
+\begin{frame}
+\begin{center}
+\structure{Adversarial Learning}
+\end{center}
+\begin{itemize}
+\item Can train powerful classifiers with supervised learning \\
+Deep networks + labeled data + backprop = unreasonably effective \pause
+\item Adversarial learning\\
+Can we do useful things by \textbf{fooling} such classifiers? \pause
+\item Since these networks are differentiable, can use gradients to fool them.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Adversarial Examples}
+\end{center}
+\center
+\includegraphics[scale=0.17]{adv-example}
+\[\xvec + \epsilon \nabla_{\xvec} \log p_\theta(\text{ostrich} | \xvec) \]
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Adversarial Domain Adaptation}
+\end{center}
+\begin{itemize}
+\item Only have sentiment labels for restaurant reviews, but want to apply the model to hotel reviews \pause
+\item Let $\mathbf{h} = f_\theta(\xvec)$ be the layer before the softmax, i.e.
+\[ p(\text{sentiment} | \xvec) = \text{softmax}(\mathbf{W}\mathbf{h}) \]
+\item Want to ``erase'' domain information from $\mathbf{h}$ with adversarial training
+\begin{enumerate} \pause
+\item Train an additional classifier with parameter $\phi$ to predict domain, i.e.
+$p(\text{domain} | \xvec) = \text{softmax}(\mathbf{U}\mathbf{h})$, domain $\in \{$restaurant, hotel$\}$ \pause
+\item Additionally train $\theta$ to fool $\phi$, i.e. for restaurants,
+\[ \theta \gets \theta + \lambda_1 \nabla_\theta \log p(\text{sentiment} | \xvec) - \lambda_2 \nabla_\theta \log p(\text{restaurant} | \xvec) \]
+\end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Bias Mitigation through Adversarial Learning}
+\end{center}
+\begin{itemize}
+\item Models reflect the bias inherent in datasets
+\item Ostensibly innocuous variables bring discriminatory bias into models (e.g. zip code)
+\item Use adversarial training to erase information about: age, race, gender, etc.
+\end{itemize}
+\end{frame}
+
+
+\section{Explicit/Implicit Density Models}
+
+\begin{frame}
+\begin{center}
+\structure{How to statistically describe data?}
+\begin{enumerate}
+\item Explicit density models: Specify the density $p(x)$ \textbf{explicitly}, e.g.
+\[ p(x) = e^{-x}, x > 0 \] \pause
+\item Implicit density models: Specify how we can \textbf{sample} from $p(x)$. This \textbf{implicitly} defines the distribution $p(x)$, e.g. \\
+\center
+``Sample $z \sim \mathcal{U}[0, 1]$, set $x = -\log z$''
+\end{enumerate}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Explicit Density Model: Examples}
+\end{center}
+So far: fit model by maximizing log-likelihood of the data directly (language model),
+\[ \max_\theta \sum_{i=1}^N \log p_\theta(\xvec^{(i)})\]
+or maximize a lower-bound (VAE)
+\[ \max_{\phi, \theta} \sum_{i=1}^N ELBO(\xvec^{(i)}, \theta, \phi)\]
+\\
+Reminder:
+\[ ELBO(\xvec, \theta, \phi) = \E_{q_{enc_\phi(\xvec)}(\zvec)}[\log p_\theta(\xvec | \zvec)] - KL[q_{enc_\phi(\xvec)}(\zvec) \Vert p(\zvec)] \]
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Explicit Density Model: Examples}
+\end{center}
+Explicit density models parameterize the density $p_\theta(\xvec)$ explicitly
+\begin{itemize}
+\item No latent variables: specify $p_\theta(\xvec)$ directly
+\item Latent variables: $p_\theta(\xvec) = \int_\zvec p_\theta(\xvec, \zvec) d\zvec$ \\
+(may be computationally expensive, but we can still specify it)
+\item Most models in machine learning are of this form
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+\structure{Implicit Density Models}
+\end{center}
+\begin{itemize}
+\item Only given recipe for \textbf{sampling} from $p_\theta(\xvec)$
+\item Example 1:
+\begin{enumerate}
+\item $\zvec \sim \mathcal{N}(0, I)$
+\item $\xvec = \mathbf{m} + \mathbf{A}\zvec $
+\end{enumerate} \pause
+\item Example 2:
+\begin{enumerate}
+\item $z \sim \mathcal{N}(0, 1)$
+\item \[x =  3435\cdot \Big(\frac{\sqrt{|\log \sin (z)}|}{\exp z^{\pi}}\Big)^{\frac{1}{\cos z}} \]
+\end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Implicit Density Models}
+\end{center}
+\begin{itemize}
+\item Example 3:
+\end{itemize}
+\center
+\includegraphics[scale=0.45]{abc}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+\structure{Caveats}
+\end{center}
+\center
+\begin{itemize}
+\item Distinction between explicit/implicit density models: more heuristic than mathematical, since we can calculate pdf/cdf in principle, e.g. 
+\[ P(X < t) = \int_{z : G(z) < t} \frac{1}{\sqrt{2\pi}}\exp -\frac{z^2}{2} dz \]
+where \[G(z) =  3435\cdot \Big(\frac{\sqrt{|\log \sin (z)}|}{\exp z^{\pi}}\Big)^{\frac{1}{\cos z}}\] \pause
+\item  Implicit density models potentially more flexible, since we don't have to define the density. \pause
+\item I.e. we can implicitly work with distributions outside the well-known parametric families
+\end{itemize}
+
+%\includegraphics[scale=0.3]{dgm} \\
+%(Goodfellow, NIPS 2016 GAN tutorial)
+\end{frame}
+
+
+
+\section{Generative Adversarial Networks}
+
+\begin{frame}
+\begin{center}
+\structure{Implicit Deep Generative Models}
+\end{center}
+Setup:
+\begin{enumerate}
+\item $\zvec \sim N(0, I)$
+\item $\xvec = G_\theta(\zvec)$, where $G_\theta(\cdot)$ is a deep model parameterized by $\theta$ \pause
+\end{enumerate}
+\pause
+\vspace{5mm}
+Compare with latent variable model from previous lecture: i.e. $\xvec \sim p_\theta( \xvec | \zvec)$
+\begin{itemize}
+\item Explicit density: $\xvec$ \textbf{\emph{sampled}} from the conditional distribution whose density is parameterized by a transformation of $\zvec$
+\item Implicit density: $\xvec$ \textbf{\emph{is}} a parametric transformation of $\zvec$ 
+\end{itemize}
+(these distinctions will get blurry when we get to text)
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Implicit vs Explicit Deep Generative Models}
+\end{center}
+Example: $\xvec \in \reals^{784}$ (MNIST digits, continuous) \\
+\begin{enumerate}
+\item Sample $\zvec \sim \mathcal{N}(0, I)$
+\item $\mathbf{h} = \mathbf{W}_2\text{ReLU}(\mathbf{W}_1\zvec)$
+\end{enumerate}
+\pause
+\begin{itemize}
+\item Explicit density: $\xvec \sim \mathcal{N}(\mathbf{h}, I)$
+\item Implicit density: $\xvec = \mathbf{h}$
+\end{itemize}
+$\theta = \mathbf{W}_1, \mathbf{W}_2$
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Learning in Implicit Generative Models}
+\end{center}
+\begin{itemize}
+\item Explicit density models: we can directly maximize $\log p_\theta(\xvec)$ (or a lower bound)
+\item How can we learn when we can't even specify $p_\theta(\xvec)$?
+\item Adversarial learning to the rescue!
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+\structure{Generative Adversarial Networks (GAN)}
+
+\end{center}
+Latent variable $\zvec \in \reals^n$, $\zvec \sim \mathcal{N}(0, I)$, $n \in [32, 128]$\\
+Output space $\xvec \in \mathcal{X}$ (e.g. $\mathcal{X} = \reals^{3 \times 128 \times 128}$ for RGB images)  \pause \\
+\begin{itemize}
+\item A \textbf{generator} $G_\theta(\cdot): \reals^n  \rightarrow \mathcal{X}$  \pause
+\item A \textbf{discriminator} $D_\phi(\cdot): \mathcal{X} \rightarrow (0,1)$  \\
+$D_\phi(\cdot)$ is the probability that the input comes from real data, i.e. \\
+we want $D_\phi(\xvec) \approx 1$ , $ D_\phi(G_\theta(\zvec)) \approx 0$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{GAN}
+\end{center}
+Discriminator $D_\phi$ is trained to distinguish between real samples $\xvec \sim p_\mathcal{D}(\xvec)$ and fake samples $G_\phi(\zvec)$
+\[ {\color{blue} \max_{D_\phi}} \, \mathbbm{E}_{\xvec \sim p_\mathcal{D}(\xvec) }[\log D_\phi(\xvec)]  + \mathbbm{E}_{\zvec \sim p(\zvec)} [\log (1 - D_\phi(G_\theta(\zvec))) ] \]
+\\
+\pause
+Generator $G_\theta$ is trained to fool the discriminator
+\[ {\color{red} \min_{G_\theta}} \, {\color{blue} \max_{D_\phi}} \, \underbrace{\mathbbm{E}_{\xvec \sim p_\mathcal{D}(\xvec) }[\log D_\phi(\xvec)]}_{\text{log-prob of real data}}  + \underbrace{\mathbbm{E}_{\zvec \sim p(\zvec)} [\log (1 - D_\phi(G_\theta(\zvec))) ]}_{\text{log-prob of generated data}} \]
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{GAN}
+   \end{center}
+   \center
+\includegraphics[scale=0.3]{ara-gan}
+\end{frame}
+
+
+
+\begin{frame}
+\begin{center}
+\structure{GAN: Details}
+\end{center}
+Discriminator training:
+\begin{itemize}
+\item Draw real sample $\xvec \sim p_\mathcal{D}(\xvec)$ \pause
+\item Draw latent vector $\zvec$, generate fake sample $G_\theta(\zvec)$ \pause
+\item Calculate $L_{disc} = \log D_\phi(\xvec) + \log (1 - D_\phi(G_\theta(\zvec)))$ \pause
+\item Take gradient step to maximize $L_{disc}$, i.e. \\
+\[ \phi \leftarrow \phi + \alpha \frac{\partial L_{disc}}{\partial \phi}\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{GAN: Details}
+\end{center}
+Generator training:
+\begin{itemize}
+\item Draw latent vector $\zvec$, generate fake sample $G_\theta(\zvec)$ \pause
+\item Calculate $L_{gen} = \log (1 - D_\phi(G_\theta(\zvec)))$ \\ 
+($\log D_\phi(\xvec)$ is constant with respect to $G_\theta$) \pause
+\item Take gradient step to minimize $L_{gen}$, i.e. \\
+\[ \theta \leftarrow \theta - \alpha \frac{\partial L_{gen}}{\partial \theta}\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{GAN: Practical Issues}
+\end{center}
+GAN training is notoriously unstable
+\begin{itemize}
+\item $G_\theta(\cdot)$ maximizes $\log D_\phi(G_\theta(\xvec))$ (instead of minimizing $\log (1- D_\phi(G_\theta(\xvec)))$ \pause
+\item Discriminator has an easy task in beginning $\implies$ need to balance training of $D_\phi$ vs $G_\theta$ \pause
+\item Mode-collapse: Generator samples are not diverse
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{GAN: Theoretical Properties}
+\end{center}
+\begin{itemize}
+\item Can be shown to be implicitly minimizing the \textbf{Jensen-Shannon} divergence between the data distribution $p_\mathcal{D}(\xvec)$ and the generator distribution $p_\theta(\xvec)$
+\[ JS(p_\mathcal{D} \,||\, p_\theta) = \frac{1}{2} \KL(p_\mathcal{D} \, || \, \frac{1}{2}(p_\mathcal{D} + p_\theta)) + \frac{1}{2} \KL(p_\theta \, || \, \frac{1}{2}(p_\mathcal{D} + p_\theta))\] \pause
+\item Maximum likelihood minimizes $\KL[p_\mathcal{D} (\xvec) \, \Vert \, p_\theta (\xvec)]$ \pause
+%\item Example of \textbf{implicit density methods}: never calculate the likelihood explicitly, and only work with the ratio $\frac{p_\theta(\xvec)}{p_\mathcal{D}(\xvec)}$ \pause
+%\begin{align*}
+%D_{opt}(\xvec) = \frac{p_\mathcal{D}(\xvec)}{p_\mathcal{D}(\xvec) + p_\theta(\xvec)} = \frac{1}{1 + {\color{red} \frac{p_\theta(\xvec)}{p_\mathcal{D}(\xvec)}}}  
+%\end{align*} \pause
+\item Can also minimize other divergence measures: Wasserstein distance, $f$-divergences, Maximum Mean Discrepancy, etc.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+\structure{GAN: Applications}
+\end{center}
+\center
+VAE\\
+\includegraphics[scale=0.3]{vae-faces}
+\\
+GAN: \url{https://www.youtube.com/watch?v=XOxxPcy5Gr4}
+
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{GAN: Applications}
+\end{center}
+\center
+Conditional Image Generation
+\includegraphics[scale=0.3]{stackgan}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{GAN: Applications}
+\end{center}
+\center
+Unaligned Style Transfer
+\includegraphics[scale=0.35]{cyclegan}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{GAN: Applications}
+\end{center}
+\center
+Videos generation: \\ \url{http://carlvondrick.com/tinyvideo/}
+\end{frame}
+
+
+\section{Generative Adversarial Networks for Text} 
+\begin{frame}
+\begin{center}
+\structure{Discrete GAN: Problem}
+\end{center}
+\begin{itemize}
+\item Recall that the generator needs to minimize $L_{gen} = \log (1-D_\phi(G_\theta(\zvec)))$ \pause
+\item Chain rule gives
+\[ \frac{\partial L_{gen}}{\partial \theta} = -\frac{1}{1-D_\phi(G_\theta(\zvec))}{\color{red} D'_\phi(G_\theta(\zvec))}G_\theta'(\zvec)\]
+\item Discriminator $D_\phi(\cdot)$ has to be differentiable everywhere \pause
+\item Clearly not the case if the output space $\mathcal{X}$ is discrete 
+\pause
+\item Natural language: $\mathcal{X} = |\mathcal{V}|^m$, where $\mathcal{V}$ is your vocabulary, $m$ is sentence length.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Discrete GAN: Problem}
+\end{center}
+\begin{itemize} 
+\item Another problem
+\[ \frac{\partial L_{gen}}{\partial \theta} = -\frac{1}{1-D_\phi(G_\theta(\zvec))}{\color{red} D'_\phi(G_\theta(\zvec))}{\color{blue}G_\theta'(\zvec)}\] 
+\item Generator $G_\theta(\cdot)$ has to be differentiable everywhere \pause
+\item Not the case for autoregressive models that that uses the previously generated output as input to the next time step.
+\item e.g. RNN: $p(\xvec | \zvec) = \prod_{t=1}^T p(\xvec_t | \xvec_{<t}, \zvec)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Discrete GAN: Solutions}
+\end{center}
+\begin{itemize}
+\item Policy gradients \pause
+\item ``Relax'' the discrete space to a continuous space \pause
+\item Perform GAN training in a learned, continuous space  \pause
+\end{itemize}
+(None of them are really robust yet)
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{GAN vs VAE}
+\end{center}
+\begin{itemize} 
+\item VAE: Continuous/discrete \textbf{output},  continuous \textbf{latent} 
+\item GAN: Continuous \textbf{output}, continuous/discrete \textbf{latent}
+\end{itemize}
+Otherwise, need policy gradients or the ``Gumbel-softmax'' trick
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Takeaways}
+\end{center}
+\begin{itemize} 
+\item Adversarial learning is a powerful framework
+\item Explicit vs Implicit Density models
+\item Generative Adversarial Networks: Implicit density models learned adversarially
+\end{itemize}
+\end{frame}
+
+
+\end{document}

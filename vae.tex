@@ -1,0 +1,711 @@
+\documentclass{beamer}
+% \mode<presentation>
+\setbeamertemplate{navigation symbols}{}
+\let\tempone\itemize
+\let\temptwo\enditemize
+\renewenvironment{itemize}{\tempone\addtolength{\itemsep}{0.5\baselineskip}}{\temptwo}
+\usepackage{beamerthemeshadow}
+\usepackage[normalem]{ulem}
+\usepackage{tikz}
+\usepackage{tikz-dependency}
+\usetikzlibrary{shapes.arrows}
+
+\tikzset{
+    myarrow/.style={
+        draw,
+        fill=gray,
+        single arrow,
+        minimum height=3.5ex,
+        single arrow head extend=1ex
+    }
+}
+\newcommand{\arrowup}{%
+\tikz [baseline=-0.5ex]{\node [myarrow,rotate=90] {};}
+}
+\newcommand{\arrowdown}{%
+\tikz [baseline=-1ex]{\node [myarrow,rotate=-90] {};}
+}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{pgffor}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage{tabularx}
+\usepackage{tikz,etoolbox}
+\usepackage{tikz,amsmath,siunitx}
+\usetikzlibrary{arrows,snakes,backgrounds,patterns,matrix,shapes,fit,calc,shadows,plotmarks}
+
+\usepackage{subcaption}
+% \usepackage{url}
+% \usepackage{hyperref}
+\usepackage{pgf}
+\usepackage{latexsym}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[noend]{algpseudocode}
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage[absolute,overlay]{textpos}
+\usetikzlibrary{shapes,arrows,positioning,automata,positioning,spy,matrix,scopes,chains}
+\newcommand{\digs}[2]{\hphantom{999}\llap{#1}\,+\,\hphantom{999}\llap{#2}}
+\setbeamersize{text margin left=6mm}
+\setbeamersize{text margin right=6mm}
+\renewcommand{\insertnavigation}[1]{}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{}
+\usefonttheme{professionalfonts}
+\setbeamercovered{transparent}
+\mode<presentation>
+\linespread{1.25}
+\DeclareMathOperator{\Tr}{Tr} 
+
+\usepackage{color}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage[all,dvips]{xy}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{framed}
+\usepackage{natbib}
+\usepackage[labelformat=empty]{caption}
+\newcommand{\air}{\vspace{0.25cm}}
+\newcommand{\mair}{\vspace{-0.25cm}}
+
+\setbeamertemplate{navigation symbols}{}%remove navigation symbols
+\renewcommand{\rmdefault}{crm}
+\newcommand{\lnbrack}{{\normalfont [}}
+\newcommand{\rnbrack}{{\normalfont ]}\thinspace}
+\newcommand{\lbbrack}{\textcolor{red}{\textbf{[}}}
+\newcommand{\rbbrack}{\textcolor{red}{\textbf{]}}\thinspace}
+\definecolor{vermillion}{RGB}{213,94,0}
+\newcommand{\given}{\,|\,}
+\definecolor{orange}{RGB}{230,159,0}
+\definecolor{skyblue}{RGB}{86,180,233}
+\definecolor{bluegreen}{RGB}{90,143,41}
+% \definecolor{bluegreen}{RGB}{0,158,115}
+\definecolor{myyellow}{RGB}{240,228,66} % i dunno if this is the same as standard yellow
+\definecolor{myblue}{RGB}{0,114,178}
+\definecolor{vermillion}{RGB}{213,94,0}
+\definecolor{redpurple}{RGB}{204,121,167}
+\definecolor{lightgrey}{RGB}{234,234,234}
+
+\newcommand{\ha}{\boldh_{\ua}}
+\newcommand{\hp}{\boldh_{\up}}
+\newcommand{\pgrad}{\nabla_{p}^\mathcal{L}}
+
+\newcommand{\todoy}[1]{\textcolor{red}{Fix me (yoon): #1}}
+\newcommand{\todos}[1]{\textcolor{red}{Fix me (sasha): #1}}
+
+\newcommand{\hc}{\boldh_{\mathrm{c}}}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\logadd}{logadd}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\signexp}{signexp}
+\DeclareMathOperator{\sigmoid}{sigmoid}
+\DeclareMathOperator{\fwdbwd}{ForwardBackward}
+\DeclareMathOperator{\softparent}{soft-parent}
+\DeclareMathOperator{\parent}{parent}
+\DeclareMathOperator{\head}{head}
+\DeclareMathOperator{\softhead}{soft-head}
+\DeclareMathOperator{\simf}{sim}
+\DeclareMathOperator{\NN}{NNet}
+\DeclareMathOperator{\attn}{Attn}
+\DeclareMathOperator{\relu}{ReLU}
+\DeclareMathOperator{\lstm}{LSTM}
+\DeclareMathOperator{\rnn}{RNN}
+\DeclareMathOperator{\mlp}{MLP}
+
+
+
+\usetikzlibrary{positioning}
+% \setbeamerfont{alerted text}{series=\bfseries}
+% \setbeamerfont{structure}{series=\bfseries}
+% Needed for diakgrams.
+\def\im#1#2{
+  \node(#1) [scale=#2]{\pgfbox[center,top]{\pgfuseimage{#1}}
+};}
+% \input{pictures_header}
+
+
+\title[latent]{Variational Inference}
+
+\author[Yoon Kim]{February 20, 2018}
+\institute[Harvard SEAS]{ 
+{ }
+
+ % Code: \textbf{https://github.com/harvardnlp/struct-attn}}
+% \vspace{5mm}
+
+% \hspace{-70mm} $^*$Equal Contribution
+}
+\date{}
+% \usetheme{Madrid}
+\definecolor{darkgreen}{rgb}{0.13, 0.55, 0.13}
+\definecolor{darkpurple}{rgb}{0.55, 0.0, 0.55}
+
+\newcommand{\enc}{\mathrm{src}}
+
+\newcommand{\yvec}{\mathbf{y}}
+\newcommand{\tvec}{\mathbf{t}}
+\newcommand{\wvec}{\mathbf{w}}
+\renewcommand{\c}{\mathbf{c}}
+\newcommand{\zvec}{\mathbf{z}}
+\newcommand{\E}{\mathbbm{E}}
+
+\newcommand{\mcD}{\mathcal{D}}
+
+% \newcommand{\mcY}{\mathcal{Y}}
+% \newcommand{\mcV}{\mathcal{V}}
+\newcommand{\context}{\mathbf{w}_{\mathrm{c}}}
+\newcommand{\embcontext}{\mathbf{\tilde{w}}_{\mathrm{c}}}
+\newcommand{\inpcontext}{\mathbf{\tilde{x}}}
+\newcommand{\start}{\mathbf{\tilde{y}}_{\mathrm{c0}}}
+\newcommand{\End}{\mathrm{\texttt{</s>}}}
+
+\newcommand{\Uvec}{\mathbf{U}}
+\newcommand{\Evec}{\mathbf{E}}
+\newcommand{\Gvec}{\mathbf{G}}
+\newcommand{\Fvec}{\mathbf{F}}
+\newcommand{\Pvec}{\mathbf{P}}
+\newcommand{\pvec}{\mathbf{p}}
+\newcommand{\q}{\mathbf{Q}}
+\newcommand{\Vvec}{\mathbf{V}}
+\newcommand{\Wvec}{\mathbf{W}}
+\newcommand{\h}{\mathbf{h}}
+% \newcommand{\reals}{\mathbb{R}}
+
+\newcommand{\Cite}[1]{{\footnotesize \citep{#1}}}
+\newcommand{\TT}[1]{{\footnotesize\tt{#1}}}
+\newcommand{\roplus}{{\color{red} \bigoplus}}
+\newcommand{\rotimes}{{\color{red} \,\otimes\,}}
+
+\newcommand{\boldw}{\boldsymbol{w}}
+\newcommand{\xvec}{\mathbf{x}}
+
+\newcommand{\boldu}{\boldsymbol{u}}
+\newcommand{\boldv}{\boldsymbol{v}}
+\newcommand{\boldb}{\boldsymbol{b}}
+\newcommand{\boldW}{\boldsymbol{W}}
+\newcommand{\boldh}{\boldsymbol{h}}
+\newcommand{\boldg}{\boldsymbol{g}}
+\newcommand{\ua}{\ensuremath{\mathrm{a}}}
+\newcommand{\up}{\ensuremath{\mathrm{p}}}
+%\newcommand{\bphi}{\ensuremath{\mathbf{\phi}}}
+\newcommand{\bphi}{\boldsymbol{\phi}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\mcY}{\mathcal{Y}}
+\newcommand{\mcX}{\mathcal{X}}
+\newcommand{\mcC}{\mathcal{C}}
+\newcommand{\mcA}{\mathcal{A}}
+\newcommand{\mcV}{\mathcal{V}}
+\newcommand{\trans}{\ensuremath{\mathsf{T}}}
+\def\argmin{\operatornamewithlimits{arg\,min}}
+\def\argmax{\operatornamewithlimits{arg\,max}}
+\newcommand{\reals}{\ensuremath{\mathbb{R}}}
+
+\newcommand{\aphi}{\boldsymbol{\phi}_{\mathrm{a}}}
+\newcommand{\pwphi}{\boldsymbol{\phi}_{\mathrm{p}}}
+\newcommand{\squigaphi}{\widetilde{\boldsymbol{\phi}}_{\mathrm{a}}}
+\newcommand{\squigpwphi}{\widetilde{\boldsymbol{\phi}}_{\mathrm{p}}}
+
+\newcommand{\aW}{\boldW_{\mathrm{\ua}}}
+\newcommand{\pW}{\boldW_{\mathrm{\up}}}
+
+\newcommand{\ab}{\boldb_{\mathrm{\ua}}}
+\newcommand{\pb}{\boldb_{\mathrm{\up}}}
+
+\newcommand{\Da}{d_{\mathrm{a}}}
+\newcommand{\Dp}{d_{\mathrm{p}}}
+
+% \newcommand{\ha}{\boldh_{\ua}}
+% \newcommand{\hp}{\boldh_{\up}}
+
+\newcommand{\ourmodel}{This work}
+\newcommand{\zro}{{\color{white}0}}
+\AtBeginSection[]
+{
+  \begin{frame}
+  \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}
+  \tableofcontents[currentsubsection]
+  \end{frame}
+}
+
+
+\def\argmax{\operatornamewithlimits{arg\,max}}
+\def\kargmax{\operatornamewithlimits{K-arg\,max}}
+\setbeamercovered{transparent}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \tableofcontents
+\end{frame}
+\section{Generative Models}
+
+\begin{frame}
+  \begin{center}
+    \structure{Generative Models}
+   \end{center} 
+   \begin{itemize}   
+   \item Describes how the observed data are generated
+   \item You've seen one example already: \\
+   %\begin{itemize}
+  Language modeling : Given $x_1, \dots, x_T$, fit $p_\theta(x_1, \dots, x_T)$ to the data.
+    %\item Naive Bayes (HW1): Given $(\xvec^{(i)},  y^{(1)}), \dots (\xvec^{(N)}, y^{(N)})$ where $\xvec^{(i)} =[x_1^{(i)}, \dots, x_T^{(i)}]$, fit a model $p_\theta(y^{(i)}, \xvec^{(i)}) = p_\theta(y^{(i)})\prod_{t=1}^T p(x_t^{(i)} | y^{(i)})$
+    %\item Logistic Regression?
+   %\end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Generative Models: Example}
+   \end{center}
+Often helpful to think of the underlying \textbf{generative process} (i.e. how one could generate data according to the model). E.g. for a bigram language model,
+\begin{enumerate}
+\item Draw $x_1 \sim p(X | Y = \langle$s$\rangle)$
+\item Draw $x_2 \sim p(X| Y = x_1)$
+\item Draw $x_3 \sim p(X| Y = x_2)$
+\item \dots
+\end{enumerate}
+
+\end{frame}
+
+
+\begin{frame}
+  \begin{center}
+    \structure{Latent Variable Models}
+   \end{center}
+\begin{itemize}
+\item Language model: no latent variables, factorize $p(\xvec)$ according to chain rule
+\item Latent variable models: Assumes \textbf{observed} data $\xvec$ are generated from \textbf{unobserved} latent variables $\zvec$
+\item Simplest case:
+\begin{enumerate}
+\item Draw $\zvec$ from prior $p(\zvec)$ 
+\item Draw $\xvec$ from conditional $p(\xvec | \zvec)$ 
+\end{enumerate}
+\item Our setup:
+\begin{enumerate}
+\item $p(\zvec)$ usually simple
+\item $p_\theta(\xvec | \zvec)$  parameterized with a deep model $\theta$
+ \end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Example: Mixture of Gaussians}
+   \end{center}
+   \center
+\includegraphics[scale=0.5]{gmm1}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Example: Mixture of Gaussians}
+   \end{center}
+   \center
+\includegraphics[scale=0.5]{gmm2}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Example: Mixture of Gaussians}
+   \end{center}   
+ Generative process for GMM with $K$ mixture components: \\
+ For each data point, 
+ \begin{enumerate}
+ \item Sample $z^{(i)} \sim \text{Categorical}(\frac{1}{K})$ 
+ \item Sample $\xvec^{(i)} \sim \mathcal{N}(\mu_{z^{(i)}}, \Sigma_{z^{(i)}})$
+ \end{enumerate}
+ 
+ What is the prior? What is $\theta$? What is $p_\theta(\xvec)$? How do we learn?
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Example: Deep Generative Models}
+   \end{center}   
+MNIST digits, $\xvec \in \reals^{784}$
+ \begin{enumerate}
+ \item Sample $\zvec^{(i)} \sim \mathcal{N}(0, I), \zvec \in \reals^n$ 
+ \item Feed $\zvec^{(i)}$ through a one-layer feed-forward network
+ \[ \mathbf{h} = \text{ReLU}(\mathbf{W}_1 \zvec)\]
+ \item Sample $\xvec^{(i)} \sim \sigma(\mathbf{W}_2 \mathbf{h})$
+ \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Why Latent Variable Models?}
+   \end{center}
+\begin{itemize}
+\item Learn useful representations from unlabeled data (unsupervised learning)
+\item Natural way of incorporating multimodality
+\item Able to capture complex, hierarchical generative processes
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Why Latent Variable Models?}
+   \end{center}
+   \center
+\includegraphics[scale=0.5]{lda}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Learning in Latent Variable Models}
+   \end{center}
+ Given data $\xvec^{(i)}, i = 1, \dots, N$, want to maximize log-likelihood, i.e.
+ \[ \max_\theta \sum_{i=1}^N \log p(\xvec^{(i)})\]
+\begin{itemize}
+\item No latent variables: usual setup
+\item Latent variables:
+\[ \max_\theta \sum_{i=1}^N \log \int_\zvec p_\theta(\xvec^{(i)} | \zvec^{(i)})p(\zvec^{(i)}) d\zvec \]
+(replace $\int$ with sum if $\zvec$ discrete)
+\end{itemize}
+\end{frame}
+
+%\begin{frame}
+%  \begin{center}
+%    \structure{Learning in Latent Variable Models: EM}
+%   \end{center}
+%Review: Expectation-Maximization. 
+%\[ \sum_{i=1}^N \log \int_\zvec p_\theta(\xvec^{(i)} | \zvec^{(i)})p(\zvec^{(i)}) d\zvec \]
+%\begin{itemize}
+%\item $\log \int \cdot$ is hard to work with, so EM tells us to work with the $\textbf{complete data likelihood}$ $\log p_\theta(\xvec, \zvec)$
+%\item E-step: Fix parameters $\theta_{t-1}$. Calculate
+%\[ Q(\theta, \theta_{t-1}) = \E_{\zvec \sim p_{\theta_{t-1}}(\zvec | \xvec)} [\log p_\theta(\xvec , \zvec)]\]
+%\item M-step:
+%\[ \max_\theta Q(\theta, \theta_{t-1})\]
+%\end{itemize}
+%\end{frame}
+
+\section{Variational Inference}
+\begin{frame}
+  \begin{center}
+    \structure{Learning in Latent Variable Models}
+   \end{center}
+Variational Inference:
+\begin{itemize}
+\item Idea: Introduce a \textbf{variational} distribution $q_\lambda(\zvec)$
+parameterized by $\lambda$ for each data point. Then,
+\begin{align*}
+\log p_\theta(\xvec) \ge \E_{q_\lambda(\zvec)} [\log p_\theta(\xvec|\zvec)] - KL[q_\lambda(\zvec) \Vert p(\zvec)]
+%\log \int_\zvec p_\theta (\xvec , \zvec) d\zvec &= \log \int_\zvec \frac{q_\lambda(\zvec)}{q_\lambda(\zvec)}p_\theta (\xvec , \zvec) d\zvec \\ 
+%&= \log \E_{q_\lambda (\zvec)}[\frac{p_\theta(\xvec}]
+\end{align*}
+(Derive on board)
+\item This is called the \textbf{evidence lower bound} or \textbf{ELBO}
+\item Running example: Gaussian variational family 
+\[ q_\lambda(\zvec) = \mathcal{N}(\mu , \Sigma)\]
+i.e. $\lambda = [\mu, \Sigma]$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Evidence Lower Bound}
+   \end{center}   
+   Learning problem: Find $\lambda^{(i)}, \theta$ that maximize 
+\[ \sum_{i=1}^N \E_{q_\lambda^{(i)}(\zvec)}[\log  p_\theta(\xvec^{(i)} | \zvec^{(i)}) ] - KL[q_{\lambda^{(i)}}(\zvec) \Vert p(\zvec^{(i)})] \]
+Coordinate ascent:
+\begin{enumerate}
+\item Hold $\theta$ fixed, maximize ELBO with respect to $\lambda^{(i)}$'s
+\item Hold $\lambda^{(i)}$'s fixed, maximize ELBO with respect to $\theta$
+\item Repeat
+\end{enumerate}
+In certain cases coordinate ascent admits analytic update formulas
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Examining the ELBO}
+   \end{center}   
+       Consider a single point
+  \[ ELBO = \log p_\theta(\xvec)- KL[ q_\lambda(\zvec) \Vert p_\theta(\zvec | \xvec)) ]  \]
+   \textbf{Claim}: Setting $q_\lambda(\zvec) = p_\theta(\zvec | \xvec)$ makes the bound tight, i.e.
+     \[ ELBO = \log p_\theta(\xvec)  \]
+     \begin{itemize}
+  \item Justifies why optimizing the ELBO is a good idea
+  \item But why can't we do this all the time?
+  \end{itemize}
+  \end{frame}
+  
+  \begin{frame}
+  \begin{center}
+    \structure{Posterior vs Variational Family}
+   \end{center}   
+   \center
+\includegraphics[scale=0.7]{vi-gauss}
+ \end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Examining the ELBO}
+   \end{center}   
+   
+  \[ ELBO = \log p_\theta(\xvec)- KL[ q_\lambda(\zvec) \Vert p_\theta(\zvec | \xvec)) ]  \]
+
+\begin{itemize}
+\item Usually, we will be learning the generative model $\theta$
+\item But if we are just interested in inference (e.g. at test time), we can minimize with respect to $q_\lambda(\zvec)$
+\[ KL[q_\lambda(\zvec) \Vert p_\theta(\zvec | \xvec)] \]
+\item ``Inference as optimization"
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \begin{center}
+    \structure{Yet another view of ELBO}
+   \end{center}   
+   Rearranging some terms, we also get that 
+   \begin{align*}
+    ELBO &= \log p_\theta(\xvec)- KL[ q_\lambda(\zvec) \Vert p_\theta(\zvec | \xvec)) \\
+    &= \E_{q_\lambda^{}(\zvec)}[\log  p_\theta(\xvec^{} , \zvec^{}) ] + \mathbbm{H}[q_\lambda(\zvec)]
+    \end{align*}
+\begin{enumerate}
+\item Hold $\theta$ fixed, set $q_\lambda(\zvec) = p_\theta (\zvec | \xvec) $ (suppose this is tractable)
+\item Hold $q_\lambda(\zvec)$ fixed, maximize 
+\[ \E_{q_\lambda^{}(\zvec)}[\log  p_\theta(\xvec^{} , \zvec^{}) ]  \]
+($\mathbbm{H}[q_\lambda(\zvec)]$ constant with respect to $\theta$)
+\end{enumerate}
+(This is exactly the EM algorithm)
+\end{frame}
+
+%\begin{frame}
+%  \begin{center}
+%    \structure{Connecting EM and VI}
+%   \end{center}   
+%   Expectation-Maximization algorithm is a special case of Variational Inference. where:
+%   \begin{itemize}
+%   \item Posterior $p_\theta(\zvec|\xvec)$ is tractable to calculate
+%   \item ELBO is optimized with coordinate ascent
+%   \end{itemize}
+%In our setting, $p_\theta(\zvec | \xvec)$ will almost always be intractable
+%\end{frame}
+
+
+
+\section{Stochastic Variational Inference}
+
+
+\begin{frame}
+  \begin{center}
+    \structure{Stochastic Variational Inference}
+   \end{center}   
+   
+\[ \sum_{i=1}^N \E_{q_\lambda^{(i)}(\zvec)}[\log  p_\theta(\xvec^{(i)} | \zvec^{(i)}) ] - KL[q_{\lambda^{(i)}}(\zvec) \Vert p(\zvec^{(i)})] \]
+
+\begin{itemize}
+\item Coordinate ascent is impractical on large datasets (need to find optimal $\lambda^{(i)}$ for all $i$, then update $\theta$)
+\item Idea: Just use minibatches (or single datum) $\implies$ Stochastic Variational Inference
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Stochastic Variational Inference (Hoffman et al. 2013)}
+   \end{center}   
+Define ELBO with respect to single datum
+\[ ELBO(\xvec, \lambda, \theta) = \E_{q_\lambda^{}(\zvec)}[\log  p_\theta(\xvec^{} | \zvec^{}) ] - KL[q_{\lambda^{}}(\zvec) \Vert p(\zvec^{})] \]
+
+\begin{enumerate}
+\item Sample $\xvec \sim p_\mathcal{D}(\xvec)$
+\item Randomly initialize $\lambda_0$ 
+\item For number of steps, optimize ELBO wrt $\lambda$ with gradient ascent, i.e.
+for $k = 1, \dots, K$
+\[ \lambda_{k} \leftarrow \lambda_{k-1} + \alpha  \nabla_\lambda ELBO(\xvec, \theta, \lambda_0)\]
+\item Optimize ELBO wrt $\theta$, i.e.
+\[ \theta \leftarrow \theta + \alpha \nabla_\theta ELBO(\xvec, \theta, \lambda_K)\]
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Stochastic Variational Inference}
+   \end{center}   
+Need to compute:
+$\nabla_\lambda ELBO(\xvec, \theta, \lambda)$, $\nabla_\theta ELBO(\xvec, \theta, \lambda)$
+\begin{itemize}
+\item Easy: \\ $\nabla_\theta ELBO(\xvec, \theta, \lambda) =  \E_{q_\lambda^{}(\zvec)}[
+\nabla_\theta \log  p_\theta(\xvec^{} | \zvec^{})] $ 
+\item Hard: \\
+$\nabla_\lambda ELBO(\xvec, \theta, \lambda) =  \nabla_\lambda \E_{q_\lambda^{}(\zvec)}[\log  p_\theta(\xvec^{} | \zvec^{})] - \nabla_\lambda KL[q_{\lambda^{}}(\zvec) \Vert p(\zvec^{})] $ 
+\end{itemize}
+In the fully general case, need score function (i.e. policy gradients/ REINFORCE) from last lecture
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{The Reparameterization Trick}
+   \end{center}
+   \begin{itemize}
+\item Until now: $p(\zvec), q_\lambda(\zvec)$ arbitrary distributions \\
+\item From hereon: $p(\zvec) = N(0, I)$, $ q_\lambda(\zvec) = N(\mathbf{\mu}, \Sigma)$
+\item The variational family is given by Gaussian with mean vector $\mu$ and covariances $\Sigma$ (i.e. $\lambda = [\mu, \Sigma]$)
+\item $\Sigma$ usually diagonal
+\item This allows  low-variance estimators for $\nabla_\lambda ELBO(\xvec, \theta, \lambda) $
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{The Reparameterization Trick}
+   \end{center}
+
+\[ \underbrace{\E_{q_\lambda^{}(\zvec)}[\log  p_\theta(\xvec^{} | \zvec^{})]}_{\text{1. Reparameterization trick}} - \underbrace{KL[q_{\lambda^{}}(\zvec) \Vert p(\zvec^{})]}_{\text{2. Analytic formula for Gaussian family}} \]
+\begin{itemize}
+\item Reparameterization trick (pathwise derivatives): Exploit the fact that Gaussians are \textbf{reparameterizable}
+\item Drawing $\zvec$ from $N(\mu, \Sigma)$ is the same as drawing $\epsilon \sim N(0,I)$ 
+and applying the transformation
+\[ \zvec = \mu + A\epsilon \]
+where $AA^\top = \Sigma$ (obtained from, for example, Cholesky decomposition)
+\item If $\Sigma$ is diagonal, $\text{diag}(A)  = [\sigma_1, \dots, \sigma_n]$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{The Reparameterization Trick}
+   \end{center}
+$\lambda = [\mu, \sigma^2]$
+\begin{align*}
+&\nabla_\lambda \E_{q_\lambda^{}(\zvec)}[\log  p_\theta(\xvec^{} | \zvec^{})] \\
+=& \nabla_\lambda \E_{\epsilon \sim N(0,I)}[\log  p_\theta(\xvec^{} | \mu + \epsilon \sigma  )] \\
+=& \E_{\epsilon \sim N(0,I)}[\nabla_\lambda \log  p_\theta(\xvec^{} | \mu + \epsilon \sigma  )] 
+\end{align*}
+\begin{itemize}
+\item Now we just need samples from a \textbf{fixed} distribution $\epsilon \sim N(0, I)$
+\item Empirically this has lower variance than REINFORCE estimator
+\[ \E_{q_\lambda^{}(\zvec)}[\log  p_\theta(\xvec^{} | \zvec^{})\nabla_\lambda \log q_\lambda (\zvec)] \]
+\item (But both are unbiased estimators)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{The Reparameterization Trick}
+   \end{center}
+   \center
+\includegraphics[scale=0.35]{reparam} \\
+(Circles are stochastic nodes)
+\end{frame}
+
+\section{Variational Autoencoders}
+\begin{frame}
+  \begin{center}
+    \structure{Variational Autoencoders/Amortized Inference}
+   \end{center}
+Amortized variational inference (Mnih et al. 2014, Kingma and Welling 2014, Rezende et al. 2014):
+\begin{itemize}
+\item  \textbf{Predict} the variational parameters to be a function of the input
+\[ \lambda(\xvec) = enc_\phi (\xvec) \]
+\item The \textbf{inference network} (or encoder/recognition network), parameterized by $\phi$, is shared (i.e. amortized) across all $\xvec$
+\item ``Inference as prediction"
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Variational Autoencoders/Amortized Inference}
+   \end{center}
+Learning problem
+\[ \max_{\phi, \theta} \,\,\, \E_{q_{enc_\phi(\xvec)}}[\log p_\theta (\xvec | \zvec)] - KL[q_{enc_\phi(\xvec)}(\zvec) \Vert p(\zvec)]\]
+Why Variational "Autoencoder"
+\[ \min_{\phi, \theta}  \,\,\, \underbrace{\E_{q_{enc_\phi(\xvec)}}[-\log p_\theta (\xvec | \zvec)]}_{\text{Reconstruction loss}} + \underbrace{KL[q_{enc_\phi(\xvec)}(\zvec) \Vert p(\zvec)]}_{\text{Regularizer}}\]
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Variational Autoencoders/Amortized Inference}
+   \end{center}
+End-to-end training with backprop (no coordinate ascent)
+\begin{enumerate}
+\item Sample $\xvec \sim p_\mathcal{D}(\xvec)$
+\item Run inference network 
+\[ \mu(\xvec),  \sigma^2(\xvec) = enc_\phi(\xvec)\]
+\item Sample $\epsilon \sim N(0, I)$, reparameterize $\zvec = \mu(\xvec) + \sigma (\xvec) \epsilon $
+\item Calculate loss $\mathcal{L} = - \log p_\theta(\xvec | \zvec) + KL(q_\lambda(\zvec) \Vert p(\zvec))$
+\item Update $\theta, \phi$ based on $\nabla_\theta \mathcal{L}, \nabla_\phi \mathcal{L} $
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Variational Autoencoders for Images}
+   \end{center}
+   \center
+   \includegraphics[scale=0.5]{vae-ara}
+\end{frame}
+
+
+\begin{frame}
+  \begin{center}
+    \structure{Variational Autoencoders for Images}
+   \end{center}
+   \center
+   \includegraphics[scale=0.5]{vae2}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Variational Autoencoders for Text Processing}
+   \end{center}
+   \center
+   \includegraphics[scale=0.35]{text-vae} \\
+
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Variational Autoencoders for Text Processing}
+   \end{center}
+   \center
+   \includegraphics[scale=0.3]{lstmvae} 
+  \\
+     \vspace{5mm}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Practical Issues}
+   \end{center}
+\begin{itemize}
+\item Parameterization: Use $\log \sigma^2$ instead of $\sigma^2$ 
+\item Tricks: KL-annealing, word-dropout
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \structure{Takeaways}
+   \end{center}
+\begin{itemize}
+\item Variational Inference: ``Inference as Optimization"
+\item Amortized  Inference: ``Optimization as Prediction"
+\end{itemize}
+\end{frame}
+
+
+\end{document}
