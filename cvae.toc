@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{Generative Models}{3}{0}{1}
+\beamer@sectionintoc {2}{Variational Inference}{14}{0}{2}
+\beamer@sectionintoc {3}{Stochastic Variational Inference}{21}{0}{3}
+\beamer@sectionintoc {4}{Variational Autoencoders}{29}{0}{4}

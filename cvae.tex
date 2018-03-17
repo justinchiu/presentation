@@ -8,7 +8,7 @@
 \usepackage[normalem]{ulem}
 \usepackage{tikz}
 \usepackage{tikz-dependency}
-\usetikzlibrary{shapes.arrows}
+\usetikzlibrary{shapes.arrows, positioning, fit, bayesnet}
 
 \tikzset{
     myarrow/.style={
@@ -314,7 +314,7 @@ Often helpful to think of the underlying \textbf{generative process} (i.e. how o
     \structure{Example: Mixture of Gaussians}
    \end{center}
    \center
-\includegraphics[scale=0.5]{gmm1}
+\includegraphics[scale=0.5]{img/gmm1}
 \end{frame}
 
 \begin{frame}
@@ -322,7 +322,7 @@ Often helpful to think of the underlying \textbf{generative process} (i.e. how o
     \structure{Example: Mixture of Gaussians}
    \end{center}
    \center
-\includegraphics[scale=0.5]{gmm2}
+\includegraphics[scale=0.5]{img/gmm2}
 \end{frame}
 
 \begin{frame}
@@ -368,7 +368,7 @@ MNIST digits, $\xvec \in \reals^{784}$
     \structure{Why Latent Variable Models?}
    \end{center}
    \center
-\includegraphics[scale=0.5]{lda}
+\includegraphics[scale=0.5]{img/lda}
 \end{frame}
 
 \begin{frame}
@@ -456,7 +456,7 @@ In certain cases coordinate ascent admits analytic update formulas
     \structure{Posterior vs Variational Family}
    \end{center}   
    \center
-\includegraphics[scale=0.7]{vi-gauss}
+\includegraphics[scale=0.7]{img/vi-gauss}
  \end{frame}
 
 \begin{frame}
@@ -608,7 +608,7 @@ $\lambda = [\mu, \sigma^2]$
     \structure{The Reparameterization Trick}
    \end{center}
    \center
-\includegraphics[scale=0.35]{reparam} \\
+\includegraphics[scale=0.35]{img/reparam} \\
 (Circles are stochastic nodes)
 \end{frame}
 
@@ -656,7 +656,7 @@ End-to-end training with backprop (no coordinate ascent)
     \structure{Variational Autoencoders for Images}
    \end{center}
    \center
-   \includegraphics[scale=0.5]{vae-ara}
+   \includegraphics[scale=0.5]{img/vae-ara}
 \end{frame}
 
 
@@ -665,7 +665,7 @@ End-to-end training with backprop (no coordinate ascent)
     \structure{Variational Autoencoders for Images}
    \end{center}
    \center
-   \includegraphics[scale=0.5]{vae2}
+   \includegraphics[scale=0.5]{img/vae2}
 \end{frame}
 
 \begin{frame}
@@ -673,7 +673,7 @@ End-to-end training with backprop (no coordinate ascent)
     \structure{Variational Autoencoders for Text Processing}
    \end{center}
    \center
-   \includegraphics[scale=0.35]{text-vae} \\
+   \includegraphics[scale=0.35]{img/text-vae} \\
 
 \end{frame}
 
@@ -682,7 +682,7 @@ End-to-end training with backprop (no coordinate ascent)
     \structure{Variational Autoencoders for Text Processing}
    \end{center}
    \center
-   \includegraphics[scale=0.3]{lstmvae} 
+   \includegraphics[scale=0.3]{img/lstmvae} 
   \\
      \vspace{5mm}
 \end{frame}
