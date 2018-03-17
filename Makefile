@@ -11,7 +11,7 @@ FLAGS="-pdf"
 all:$(TEX)
 	$(CC) $(FLAGS) $(TEX)
 
-	rm -rf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *~
+	rm -rf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *~
 
 clean:
-	rm -rf *.pdf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *~
+	rm -rf *.pdf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *~
