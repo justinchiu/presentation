@@ -135,7 +135,7 @@
 % \input{pictures_header}
 
 
-\title[latent]{Variational Inference}
+\title[latent]{Attention as a Latent Variable Model}
 
 \author[Yoon Kim]{February 20, 2018}
 \institute[Harvard SEAS]{ 
@@ -257,11 +257,11 @@
 \begin{frame}
   \tableofcontents
 \end{frame}
-\section{Generative Models}
+\section{Conditional VAEs}
 
 \begin{frame}
   \begin{center}
-    \structure{Generative Models}
+    \structure{VAEs}
    \end{center} 
    \begin{itemize}   
    \item Describes how the observed data are generated
@@ -276,9 +276,9 @@
 
 \begin{frame}
   \begin{center}
-    \structure{Generative Models: Example}
+    \structure{Conditional VAEs}
    \end{center}
-Often helpful to think of the underlying \textbf{generative process} (i.e. how one could generate data according to the model). E.g. for a bigram language model,
+Often helpful to think of the underlying \textbf{generative story} (i.e. how one could generate data according to the model). E.g. for a bigram language model,
 \begin{enumerate}
 \item Draw $x_1 \sim p(X | Y = \langle$s$\rangle)$
 \item Draw $x_2 \sim p(X| Y = x_1)$
@@ -291,7 +291,7 @@ Often helpful to think of the underlying \textbf{generative process} (i.e. how o
 
 \begin{frame}
   \begin{center}
-    \structure{Latent Variable Models}
+    \structure{Variational RNN}
    \end{center}
 \begin{itemize}
 \item Language model: no latent variables, factorize $p(\xvec)$ according to chain rule
