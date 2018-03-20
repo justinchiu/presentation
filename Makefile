@@ -1,6 +1,6 @@
 # Filenames to be-used in compilation
 MAIN=cvae
-TEX=cvae.tex
+TEX=main.tex
 BIB=*.bib
 
 # Core compilation commands
@@ -10,6 +10,10 @@ FLAGS="-pdf"
 
 all:$(TEX)
 	$(CC) $(FLAGS) $(TEX)
+	rm -rf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *~
+	
+cvae:cvae.tex
+	$(CC) $(FLAGS) cvae.tex
 
 	rm -rf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *~
 

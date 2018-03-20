@@ -26,7 +26,6 @@
 \tikz [baseline=-1ex]{\node [myarrow,rotate=-90] {};}
 }
 \usepackage{hyperref}
-\usepackage{natbib}
 \usepackage{pgffor}
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -36,6 +35,8 @@
 \usepackage{tikz,etoolbox}
 \usepackage{tikz,amsmath,siunitx}
 \usetikzlibrary{arrows,snakes,backgrounds,patterns,matrix,shapes,fit,calc,shadows,plotmarks}
+\usepackage[style=authoryear-comp]{biblatex}
+\addbibresource{master.bib}
 
 \usepackage{subcaption}
 % \usepackage{url}
@@ -72,7 +73,6 @@
 \usepackage{graphicx}
 \usepackage{verbatim}
 \usepackage{framed}
-\usepackage{natbib}
 \usepackage[labelformat=empty]{caption}
 \newcommand{\air}{\vspace{0.25cm}}
 \newcommand{\mair}{\vspace{-0.25cm}}
@@ -158,7 +158,7 @@
 \newcommand{\wvec}{\mathbf{w}}
 \renewcommand{\c}{\mathbf{c}}
 \newcommand{\zvec}{\mathbf{z}}
-\newcommand{\E}{\mathbbm{E}}
+\newcommand{\E}[2]{\mathbbm{E}_{#1}\left[#2\right]}
 
 \newcommand{\mcD}{\mathcal{D}}
 
@@ -182,7 +182,17 @@
 \newcommand{\h}{\mathbf{h}}
 % \newcommand{\reals}{\mathbb{R}}
 
-\newcommand{\Cite}[1]{{\footnotesize \citep{#1}}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bh}{\mathbf{h}}
+\newcommand{\bc}{\mathbf{c}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bs}{\mathbf{s}}
+\newcommand{\bt}{\mathbf{t}}
+\newcommand{\bd}{\mathbf{d}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bv}{\mathbf{v}}
+
 \newcommand{\TT}[1]{{\footnotesize\tt{#1}}}
 \newcommand{\roplus}{{\color{red} \bigoplus}}
 \newcommand{\rotimes}{{\color{red} \,\otimes\,}}
@@ -260,6 +270,7 @@
   \tableofcontents[hideallsubsections]
 \end{frame}
 \input{ssvae.tex}
+\input{summary.tex}
 \input{language_as_latent.tex}
 \input{project_proposal.tex}
 
