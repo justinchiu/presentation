@@ -189,8 +189,8 @@ p(\bx)\nabla \log p(\bx) = \nabla p(\bx)
 \structure{Details}
 \end{center}
 \begin{itemize}
-\item They also train a baseline to predict $l(\bx,\by)$ for variance reduction
-\item They use a variant of KL annealing, and augment the loss as follows
+\item They also train a baseline to predict $l(\bx,\by)$ for variance reduction (control variate)
+\item They use a variant of KL annealing and augment the loss as follows
 $$l(\bx, \by) = \log p_\theta(\bx\mid\by) + \lambda(\log p(\by) - \log q_\lambda(\by))$$
 with $\lambda = 0.1$ without justification, but note that increasing $\lambda$ results
 in shorter summaries $\by$ since the prior $p(\by)$ prefers shorter sequences
