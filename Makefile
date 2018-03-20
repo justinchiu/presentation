@@ -10,12 +10,12 @@ FLAGS="-pdf"
 
 all:$(TEX)
 	$(CC) $(FLAGS) $(TEX)
-	rm -rf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *~
+	rm -rf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *.xml *.bcf *~
 	
 cvae:cvae.tex
 	$(CC) $(FLAGS) cvae.tex
 
-	rm -rf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *~
+	rm -rf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *.xml *.bcf *~
 
 clean:
-	rm -rf *.pdf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *~
+	rm -rf *.pdf *.log *.aux *.bbl *.blg *.out *.fls *.fdb_latexmk *.nav *.snm *.toc *.xml *.bcf *~
