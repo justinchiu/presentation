@@ -1,0 +1,214 @@
+\section{Language as a Latent Variable}
+
+\begin{frame}{\subsecname Overview of Paper}
+\begin{itemize}
+\item Semi-supervised summarization
+\item Builds on \cite{kingma2014}'s M2 (the semisupervised version)
+\item But uses a sequence of words as the latent representation
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname The Idea for Extractive Summarization}
+\begin{itemize}
+\item Start with source sentence $\bx =$ `I wish I could love dogs but I just hate them'
+\item Sample a summary $\by =$ `I love dogs' by picking words from the source
+\item Reconstruct the source sentence given the summary using an attentive decoder
+\item Use the probability of the source sentence under the reconstruction decoder
+(and a couple other terms) as signal for how good the summary was
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname Auto-Encoding Sentence Compression}
+\center
+\includegraphics[scale=0.5]{img/aec.pdf}
+
+Note: Some of the parameters of the inference network
+are used as the decoder network's encoder, but the shared parameters are not updated
+using gradients from the decoder
+\end{frame}
+
+\begin{frame}{\subsecname Auto-Encoding Sentence Compression}
+\begin{itemize}
+\item The inference network $q_\lambda(\by\mid\bx)$
+uses hard attention at every timestep to select a source token
+\item Use a bidirectional source encoder on $\bx$ to get source embedding matrix
+$H^e = \textrm{BRNN}(\bx)$, whose $i$th element is the vector $\bh_i^e$.
+\item Select source token $\bx_i$ with a pointer network `compressor'
+\begin{align}
+\bh_j^c &= \textrm{RNN}(\bh_{j-1}^c, \by_{j-1})\\
+\bm{\alpha}_j &= \textrm{attention}(\bh_j^c, H^e)\\
+\by_j &\sim \textrm{Cat}(\bm{\alpha}_j)
+\end{align}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname ASC Continued}
+\begin{itemize}
+\item Let $H^c$ be the concatenation of all the compressor hidden states
+\item The decoder $p_\theta(\bx\mid\by)$
+is a conditional language model that attends over the hidden states $H^c$ 
+to reconstruct the original source sentence $\bx$
+\begin{align}
+\bh_k^d &= \textrm{RNN}(\bh_{k-1}^d, \bx_{k-1})\\
+\bv_k &= \textrm{attention}(\bh_k^d, H^c)\\
+\bd_k &= \bv_k^TH^c\\
+p_\theta(\bx_k\mid\bx_{<k}, \by) &= \textrm{softmax}(W \bd_k)
+\end{align}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname Details and Recap}
+\begin{itemize}
+\item The attention formulation from \cite{Vinyals2015a},
+which is pretty close to the `general' attention in \cite{Luong2015}
+\begin{equation}
+\textrm{attention}(q, C) = \textrm{softmax}(\bv^T\textrm{tanh}(Wq + VC))
+\end{equation}
+\item $p_\theta(\bx\mid\by)$ is the reconstructive attention based decoder
+\item $q_\lambda(\by\mid\bx)$ is the summarizing pointer network,
+and we omit the conditioning on $\bx$ when convenient (randomly)
+\item $p(\by)$ is a language model prior
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname Marginal Likelihood}
+\begin{itemize}
+\item The inference network's parameters will be denoted by $\lambda$
+and the decoder network's by $\theta$
+\item As usual, the marginal likelihood is intractable
+\begin{equation}
+\log p(\bx) = \log \sum_\by p_\theta(\bx, \by)
+\end{equation}
+since we cannot enumerate all possible summaries, even if they are extractive
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname Objective}
+\begin{itemize}
+\item So we lower bound it with Jensen's inequality and maximize the ELBO $\mathcal{L}$
+\begin{align}
+\log\sum_\by p(\bx, \by) &= \log\sum_\by q_\lambda(\by) \frac{p_\theta(\bx, \by)}{q_\lambda(\by)}\\
+&= \log \E{\by\sim q_\lambda(\by)}{\frac{p_\theta(\bx, \by)}{q_\lambda(\by)}}\\
+&\geq \E{\by\sim q_\lambda(\by)}{\log\frac{p_\theta(\bx, \by)}{q_\lambda(\by)}}\\
+&= \E{\by\sim q_\lambda(\by)}{\log p_\theta(\bx\mid\by)} \\
+&\qquad - D_{KL}(q_\lambda(\by) \Vert p(\by))\nonumber\\
+&= \mathcal{L} \nonumber
+\end{align}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname Training Details}
+\begin{itemize}
+\item The gradient of the ELBO with respect to the reconstructive decoder only
+depends on $p_\theta(\bx\mid\by)$
+\begin{equation*}
+\mathcal{L} = \underbrace{
+        \E{\by\sim q_\lambda(\by)}{\log  p_\theta(\bx \mid \by)}
+}_{\text{1. Reconstruction}} - \underbrace{
+        KL[q_{\lambda^{}}(\zvec) \Vert p(\zvec^{})]
+}_{\text{2. Regularization towards prior}}
+\end{equation*}
+\item It's given by term 1
+\begin{align}
+\nabla_\theta \mathcal{L} &=
+\nabla_\theta \E{\by\sim q_\lambda(\by)}{\log  p_\theta(\bx \mid \by)}\\
+&\approx \frac{1}{M}\sum_m \nabla_\theta\log p_\theta(\bx\mid\by^{(m)})
+\end{align}
+where $M$ sample summaries are generated through ancestral sampling
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname Training Details}
+\begin{itemize}
+\item The gradient with respect to the inference network requires REINFORCE
+\item We rewrite the ELBO
+\begin{align}
+\mathcal{L} &= \E{\by\sim q_\lambda(\by)}{\log \frac{p_\theta(\bx,\by)}{q_\lambda(\by)}}\\
+&= \E{\by\sim q_\lambda(\by)}{\log p_\theta(\bx\mid\by) + \log p(\by) - \log q_\lambda(\by)}\\
+&= \E{\by\sim q_\lambda(\by)}{l(\bx,\by)}
+\end{align}
+\item So we have $l(\bx, \by) = \log p_\theta(\bx\mid\by) + \log p(\by) - \log q_\lambda(\by)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname REINFORCE}
+\begin{itemize}
+\item Recall the score function gradient estimator
+\begin{equation}
+p(\bx)\nabla \log p(\bx) = \nabla p(\bx)
+\end{equation}
+\item We use this to find an approximation of 
+\begin{align}
+\nabla_\lambda \mathcal{L} &= \nabla_\lambda\E{\by\sim q_\lambda(\by)}{l(\bx,\by)}\\
+&= \sum_\by l(\bx,\by)\nabla_\lambda q_\lambda(\by)\\
+&= \sum_\by q_\lambda(\by)l(\bx,\by)\nabla_\lambda\log q_\lambda(\by) )\\
+&= \E{\by\sim q_\lambda(\by)}{l(\bx,\by) \nabla_\lambda\log q_\lambda(\by)}
+\end{align}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname Details}
+\begin{itemize}
+\item They also train a baseline to predict $l(\bx,\by)$ for variance reduction (control variate)
+\item They use a variant of KL annealing and augment the loss as follows
+$$l(\bx, \by) = \log p_\theta(\bx\mid\by) + \lambda(\log p(\by) - \log q_\lambda(\by))$$
+with $\lambda = 0.1$ without justification, but note that increasing $\lambda$ results
+in shorter summaries $\by$ since the prior $p(\by)$ prefers shorter sequences
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{\subsecname Questions}
+\begin{itemize}
+\item Why don't we use
+$$\log\sum_\by p(\by)p_\theta(\bx\mid\by) \geq \sum_\by \E{\by\sim p(\by)}{\log p_\theta(\bx\mid\by)}$$
+instead of introducing $q_\lambda(\by)$ if we're using REINFORCE anyway?
+\item Which parts of the reward
+$$l(\bx, \by) = \log p_\theta(\bx\mid\by) + \log p(\by) - \log q_\lambda(\by\mid\bx)$$
+can we decompose to try to lower variance a bit more?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname Forced Sentence Compression}
+\center
+\includegraphics[scale=0.65]{img/fsc.pdf}
+\end{frame}
+
+\begin{frame}{\subsecname Forced Sentence Compression}
+\begin{itemize}
+    \item The FSC generates from a mixture of the pointer network and a distribution over the full vocabulary
+    \item Recall the pointer network attentions are $\bm\alpha_j$ at time step $j$
+    \item Let the distribution over the vocabulary be $\bm\beta_j = \textrm{softmax}(W\bh_j^c)$
+    \item They use the weighted context $\bm\eta_j = \bm\alpha_j^T H^e$
+        as well as the current hidden state $\bh^c_j$ as a copy gate 
+        $\bt_j = \sigma(\eta_j^TM\bh_j^c)$
+    \item The probability of a word in the summary is then
+    \begin{align}                                                                                                             
+  & p ( \by_j | \by_{<j}, \bx )                                                             
+\!\!  = \!\! \left\{\!\!\! \begin{array}{ll}                                                                              
+     \bt_j \alpha_j(i) + (1-\bt_j)  \beta_j(\by_j), & \!\!  \by_j\!=\!\bx_i\\
+     (1-\bt_j)  \beta_j(\by_j), & \!\!  \by_j \!\notin\! \bx_i
+   \end{array} \right.                                                               
+\end{align}                                                                                                               
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname Semi-Supervised Training}
+\begin{itemize}
+\item Add the conditional likelihood of supervised summaries to the objective
+\item They do not train $p_\theta(\bx\mid\by)$ on the supervised data. What's an argument for and against this?
+\end{itemize}
+\end{frame}    
+
+
+\begin{frame}
+{\subsecname Results}
+\begin{itemize}
+\item Semi-supervised saw some benefit over supervised for extractive summarization when very using very little supervision
+\item Semi-supervised provided more consistently some benefit over purely supervised for abstractive summarization
+\item Why?
+\end{itemize}
+\end{frame}    
+
+

@@ -1,0 +1,5 @@
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@sectionintoc {2}{Latent-feature discriminative model (M1)}{5}{0}{2}
+\beamer@sectionintoc {3}{Generative semi-supervised model (M2)}{9}{0}{3}
+\beamer@sectionintoc {4}{Stacked generative semi-supervised model (M1+M2)}{15}{0}{4}
+\beamer@sectionintoc {5}{Results}{17}{0}{5}

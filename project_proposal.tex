@@ -1,0 +1,197 @@
+\section{Our Proposal: Attention as a Latent Variable}
+\subsection{Attention Mechanism}
+\begin{frame}{\subsecname: Basics}
+    \begin{itemize}
+        \item Source Input: $\mathbf{x} = \{x_1,x_2,\cdots, x_S\}$
+        \item Target Output: $\mathbf{y} = \{y_1, y_2, \cdots, y_T\}$
+        \item Encoded Source Features: $\text{enc}(\mathbf{x}) = \{\mathbf{h}_1, \mathbf{h}_2, \cdots, \mathbf{h}_S\}$
+    \end{itemize}
+
+    \begin{align*}
+    \onslide<2->{P(\mathbf{y}|\mathbf{x}) & = \prod_{j=1}^T P(y_j | y_{<i}, \mathbf{x})\\}
+    \onslide<3->{&=\prod_{j=1}^T P(y_j | y_{<j}, \text{enc}(\mathbf{x}))\\}
+    \onslide<3->{&=\prod_{j=1}^T P(y_j | y_{<j}, \{\mathbf{h}_1, \mathbf{h}_2, \cdots, \mathbf{h}_S\})}
+\end{align*}
+    \end{frame}
+\begin{frame}{\subsecname: Basics}
+\begin{itemize}
+    \item Recall that 
+    \begin{align*}
+    P(\mathbf{y}|\mathbf{x}) &=\prod_{j=1}^T P(y_j | y_{<j}, \{\mathbf{h}_1, \mathbf{h}_2, \cdots, \mathbf{h}_S\})
+\end{align*}
+    \item<2->$\{\mathbf{h}_1, \mathbf{h}_2, \cdots, \mathbf{h}_S\}$ is of varying lengths, in order to get fixed length vector, use weighted sum:
+\begin{align*}
+    P(y_j | y_{<j}, \{\mathbf{h}_1, \cdots, \mathbf{h}_S\})&=P(y_j | y_{<j}, \sum_{i=1}^S a_{ji} \mathbf{h}_i)
+    \label{eq:main}
+\end{align*}
+    \item<3->The attention weights $\mathbf{a}_j = \{a_{j1}, a_{j2}, \cdots, a_{jS}\}$ lay on a simplex
+    \item<4-> $\mathbf{a}_j$ are modeled (discriminatively) via a neural network $f$:
+    \begin{equation*}
+    \mathbf{a}_j = f(y_{<i}, \{\mathbf{h}_1, \mathbf{h}_2, \cdots, \mathbf{h}_S\})
+\end{equation*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname: Interpretation as Alignments}
+    \begin{itemize}
+        \item Recall that
+        \begin{align*}
+        P(y_j | y_{<j}, \{\mathbf{h}_1, \cdots, \mathbf{h}_S\})&=P(y_j | y_{<j}, \sum_{i=1}^S a_{ji} \mathbf{h}_i)
+        \label{eq:main}
+        \end{align*}
+        \item $P(y_j | y_{<j}, \mathbf{x})$ is related to $\mathbf{x}$ only through $\sum_{i=1}^S a_{ji} \mathbf{h}_i$
+        \item The larger $a_{ji}$, the closer $\mathbf{h}_i$ to $\sum_{i=1}^S a_{ji} \mathbf{h}_i$
+        \item $\mathbf{a}_j$ can be interpreted as how target word $j$ is aligned to source words $\{x_1,\cdots,x_S\}$
+    \end{itemize}
+\end{frame}
+{
+\usebackgroundtemplate{\vbox to \paperheight{\vfil\hbox to \paperwidth{\hfil\animategraphics[loop,controls,width=\paperwidth]{4}{img/recognition/recognition-}{5}{78}\hfil}\vfil}}
+\begin{frame}[plain]
+\end{frame}
+}
+\subsection{Attention as a Latent Variable}
+\begin{frame}{\subsecname}
+    \begin{itemize}
+        \item<1-> Formally treat attention (alignments) as a latent variable
+        \item<1-> Introduce prior over attention
+        \item<2-> Still feed decoder with $\sum_{i=1}^S a_{ji} \mathbf{h}_i$
+    \end{itemize}
+        \begin{align*}
+    \onslide<3->{&P(y_j, \mathbf{a}_j| y_{<j}, \mathbf{a}_{<j},\mathbf{x}) \\}
+    \onslide<4->{&= P(y_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x},\mathbf{a}_j)P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x}  )\\}
+    \onslide<5->{&= P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i)P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x}  )\\}
+    \end{align*}
+\end{frame}
+
+\begin{frame}{\subsecname}
+    \begin{itemize}
+        \item Recall that 
+       \begin{align*}
+    &P(y_j, \mathbf{a}_j| y_{<j}, \mathbf{a}_{<j},\mathbf{x}) \\
+   &= P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i)P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x}  )
+    \end{align*}
+    \item<2-> But we do not observe attentions $\mathbf{a}$
+    \item<3-> We need to marginalize $\mathbf{a}$:
+    \begin{align*}
+    &\log P(\mathbf{y}|\mathbf{x}) = \log \int_{\mathbf{a}}\prod_{j=1}^T P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i)P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x}  )
+\end{align*}
+    \item<4-> Normal attention is a special case if we set:
+    \begin{align*}
+        &P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x})\\
+        &=\delta(f(y_{<i}, \{\mathbf{h}_1, \mathbf{h}_2, \cdots, \mathbf{h}_S\}))
+    \end{align*}
+    \end{itemize}
+   
+\end{frame}
+
+\begin{frame}{\subsecname: Training}
+    \begin{itemize}
+        \item Recall that 
+    \begin{align*}
+    &\log P(\mathbf{y}|\mathbf{x}) = \log \int_{\mathbf{a}}\prod_{j=1}^T P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i)P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x}  )
+\end{align*}
+    \item<2-> Generally intractable due to the integral
+    \item<3-> Use VAE by introducing an approximate posterior $Q(\mathbf{a}|\mathbf{y},\mathbf{x})$:
+    \end{itemize}
+    {\small
+   \begin{align*}
+ \onslide<4->{&\log P(\mathbf{y}|\mathbf{x}) \\}
+  \onslide<5->{& = \log \int_{\mathbf{a}}Q(\mathbf{a})\frac{1}{{Q(\mathbf{a})}}\prod_{j=1}^T  P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i){P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x})} \\}
+  \onslide<6->{&\ge \int_{\mathbf{a}}Q(\mathbf{a})\log \frac{1}{{Q(\mathbf{a})}} \prod_{j=1}^T  P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i) {P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x})} \\}
+  \onslide<7->{&= \underset{\mathbf{a}\sim Q}{\mathbb{E}} [- \log Q(\mathbf{a})+\sum_{j=1}^T \log P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i)+ \log P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x})]}
+\end{align*}}
+\end{frame}
+
+\begin{frame}{\subsecname: Training}
+    \begin{itemize}
+        \item Recall that 
+\end{itemize}
+ {\small
+   \begin{align*}
+ &\log P(\mathbf{y}|\mathbf{x}) \\
+ &= \underset{\mathbf{a}\sim Q}{\mathbb{E}} [- \log Q(\mathbf{a})+\sum_{j=1}^T \log P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i)+ \log P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x})]\\
+ &= \underbrace{\underset{\mathbf{a}\sim Q}{\mathbb{E}} [\sum_{j=1}^T \log P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i)]}_{\text{Fit data}}+ \underbrace{KL(Q(\mathbf{a})|| P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x}))}_{Q(a) \text{ be close to prior }P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x})}
+\end{align*}}
+    \begin{itemize}
+        \item Apply reparamterization trick by specifying reparamterizable $Q(\mathbf{a}|\mathbf{y},\mathbf{x})$: Dirichlet or Logistic Normal
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname: Training}
+    \begin{itemize}
+        \item<1-> Dirichlet:
+        \begin{equation*}
+            \mathbf{a}_j\sim \text{Dir}(\alpha_1,\cdots,\alpha_S)
+        \end{equation*}
+        \begin{itemize}
+            \item Mean: $\frac{\alpha_1}{\alpha_0}, \cdots, \frac{\alpha_S}{\sum_i \alpha_0}$ where $\alpha_0=\sum_i \alpha_i$
+            \item Variance: $\frac{\alpha_1(\alpha_0-\alpha_1)}{\alpha_0^2(\alpha_0+1)},\cdots,\frac{\alpha_S(\alpha_0-\alpha_S)}{\alpha_0^2(\alpha_0+1)}$
+            \item Use inference network to generate the mean $\frac{\alpha_1}{\alpha_0}, \cdots, \frac{\alpha_S}{\sum_i \alpha_0}$ and $\alpha_0$.
+        \end{itemize}
+        \item<2-> Logistic Normal
+        \begin{align*}
+            &\mathbf{r}_j\sim \mathcal{N}(\mathbf{\mu}, \mathbf{\Sigma})\\
+            &\mathbf{a}_j = \text{softmax}(\mathbf{r}_j)
+        \end{align*}
+        \begin{itemize}
+            \item Use inference network to generate $\mathbf{\mu}$ and $\mathbf{\Sigma}$
+        \end{itemize}
+\end{itemize}
+ 
+\end{frame}
+\begin{frame}{\subsecname: Training}
+\begin{itemize}
+        \item Recall that 
+\end{itemize}
+ {\small
+   \begin{align*}
+ &\log P(\mathbf{y}|\mathbf{x}) \\
+ &= \underset{\mathbf{a}\sim Q}{\mathbb{E}} [- \log Q(\mathbf{a})+\sum_{j=1}^T \log P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i)+ \log P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x})]
+\end{align*}}
+    \begin{itemize}
+        \item<2-> Sampling from $Q$ is equivalent to sampling from a simple distribution $\mathcal{U}$ followed by transformation $g_{\phi}$:
+        \begin{align*}
+            &\epsilon_j\sim \mathcal{U}\\
+            &\mathbf{a}_j = g_\phi(\epsilon_j)
+        \end{align*}
+        \item<3-> The objective can be written as
+        {\small
+        \begin{equation*}
+    \hspace{-1.3cm}\underset{\epsilon_1,\cdots,\epsilon_T\sim \mathcal{U}}{\mathbb{E}} \sum_{j=1}^T \log P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S (g_\phi (\epsilon_j))_{i} \mathbf{h}_i)+ \log P(g_\phi (\epsilon_j) | y_{<j}, \mathbf{a}_{<j},\mathbf{x}) + \mathcal{H}(Q)
+\end{equation*}}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}{\subsecname: Inference}
+\begin{itemize}
+    \item Intractable to decode directly due to the integral w.r.t. $\mathbf{a}$
+    \item First, we can find the joint argmax of $\mathbf{a}$ and $\mathbf{y}$ using beam search (stepwise) and back-propagation for optimizing w.r.t. $\mathbf{a}$
+    \item Alternatively, we can use the model for rescoring
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname: Inference}
+\begin{itemize}
+    \item Intractable to decode directly due to the integral w.r.t. $\mathbf{a}$
+    \item First, we can find the joint argmax of $\mathbf{a}$ and $\mathbf{y}$ using beam search (stepwise) and back-propagation for optimizing w.r.t. $\mathbf{a}$
+    \item Alternatively, we can use the model for rescoring
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname: Network Structure}
+\begin{itemize}
+    \item $P(y_j | y_{<j}, \mathbf{a}_{<j},\sum_{i=1}^S a_{ji} \mathbf{h}_i)$: vanilla decoder
+    \item $P(\mathbf{a}_j | y_{<j}, \mathbf{a}_{<j},\mathbf{x})$: vanilla attention network: the mean of $\mathbf{a}_j$, MLP with pooling over time: parameter controlling variance ($\sigma^2$ in logistic normal or $\alpha_0$ for Dirichlet).
+    \item Inference network $Q$: normalized dot-products of embeddings: mean, MLP with pooling: variance
+\end{itemize}
+\end{frame}
+
+\begin{frame}{\subsecname: Conclusion}
+The proposed framework enjoys three-fold benefits:
+\begin{itemize}
+    \item alleviate decoder's burden to learn alignment model with a proper approximate attention posterior
+    \item the attention network gets better supervision with the KL term 
+    \item more flexible compared to vanilla attention
+\end{itemize}
+\end{frame}
