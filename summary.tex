@@ -1,10 +1,6 @@
 \section{Language as a Latent Variable}
 
-\begin{frame}
-  \begin{center}
-    \structure{Overview of Paper}
-   \end{center}   
-   
+\begin{frame}{\subsecname Overview of Paper}
 \begin{itemize}
 \item Semi-supervised summarization
 \item Builds on \cite{kingma2014}'s M2 (the semisupervised version)
@@ -12,10 +8,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{The Idea for Extractive Summarization}
-\end{center}
+\begin{frame}{\subsecname The Idea for Extractive Summarization}
 \begin{itemize}
 \item Start with source sentence $\bx =$ `I wish I could love dogs but I just hate them'
 \item Sample a summary $\by =$ `I love dogs' by picking words from the source
@@ -25,10 +18,7 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Auto-Encoding Sentence Compression}
-\end{center}
+\begin{frame}{\subsecname Auto-Encoding Sentence Compression}
 \center
 \includegraphics[scale=0.5]{img/aec.pdf}
 
@@ -37,10 +27,7 @@ are used as the decoder network's encoder, but the shared parameters are not upd
 using gradients from the decoder
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Auto-Encoding Sentence Compression}
-\end{center}
+\begin{frame}{\subsecname Auto-Encoding Sentence Compression}
 \begin{itemize}
 \item The inference network $q_\lambda(\by\mid\bx)$
 uses hard attention at every timestep to select a source token
@@ -55,10 +42,7 @@ $H^e = \textrm{BRNN}(\bx)$, whose $i$th element is the vector $\bh_i^e$.
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{ASC Continued}
-\end{center}
+\begin{frame}{\subsecname ASC Continued}
 \begin{itemize}
 \item Let $H^c$ be the concatenation of all the compressor hidden states
 \item The decoder $p_\theta(\bx\mid\by)$
@@ -73,10 +57,7 @@ p_\theta(\bx_k\mid\bx_{<k}, \by) &= \textrm{softmax}(W \bd_k)
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Details and Recap}
-\end{center}
+\begin{frame}{\subsecname Details and Recap}
 \begin{itemize}
 \item The attention formulation from \cite{Vinyals2015a},
 which is pretty close to the `general' attention in \cite{Luong2015}
@@ -90,10 +71,7 @@ and we omit the conditioning on $\bx$ when convenient (randomly)
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Marginal Likelihood}
-\end{center}
+\begin{frame}{\subsecname Marginal Likelihood}
 \begin{itemize}
 \item The inference network's parameters will be denoted by $\lambda$
 and the decoder network's by $\theta$
@@ -105,10 +83,7 @@ since we cannot enumerate all possible summaries, even if they are extractive
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Objective}
-\end{center}
+\begin{frame}{\subsecname Objective}
 \begin{itemize}
 \item So we lower bound it with Jensen's inequality and maximize the ELBO $\mathcal{L}$
 \begin{align}
@@ -122,10 +97,7 @@ since we cannot enumerate all possible summaries, even if they are extractive
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Training Details}
-\end{center}
+\begin{frame}{\subsecname Training Details}
 \begin{itemize}
 \item The gradient of the ELBO with respect to the reconstructive decoder only
 depends on $p_\theta(\bx\mid\by)$
@@ -146,10 +118,7 @@ where $M$ sample summaries are generated through ancestral sampling
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Training Details}
-\end{center}
+\begin{frame}{\subsecname Training Details}
 \begin{itemize}
 \item The gradient with respect to the inference network requires REINFORCE
 \item We rewrite the ELBO
@@ -162,10 +131,7 @@ where $M$ sample summaries are generated through ancestral sampling
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{REINFORCE}
-\end{center}
+\begin{frame}{\subsecname REINFORCE}
 \begin{itemize}
 \item Recall the score function gradient estimator
 \begin{equation}
@@ -181,10 +147,7 @@ p(\bx)\nabla \log p(\bx) = \nabla p(\bx)
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Details}
-\end{center}
+\begin{frame}{\subsecname Details}
 \begin{itemize}
 \item They also train a baseline to predict $l(\bx,\by)$ for variance reduction (control variate)
 \item They use a variant of KL annealing and augment the loss as follows
@@ -195,10 +158,7 @@ in shorter summaries $\by$ since the prior $p(\by)$ prefers shorter sequences
 \end{frame}
 
 
-\begin{frame}
-\begin{center}
-\structure{Questions}
-\end{center}
+\begin{frame}{\subsecname Questions}
 \begin{itemize}
 \item Why don't we use
 $$\log\sum_\by p(\by)p_\theta(\bx\mid\by) \geq \sum_\by \E{\by\sim p(\by)}{\log p_\theta(\bx\mid\by)}$$
@@ -209,18 +169,12 @@ can we decompose to try to lower variance a bit more?
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Forced Sentence Compression}
-\end{center}    
+\begin{frame}{\subsecname Forced Sentence Compression}
 \center
 \includegraphics[scale=0.65]{img/fsc.pdf}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\structure{Forced Sentence Compression}
-\end{center}    
+\begin{frame}{\subsecname Forced Sentence Compression}
 \begin{itemize}
     \item The FSC generates from a mixture of the pointer network and a distribution over the full vocabulary
     \item Recall the pointer network attentions are $\bm\alpha_j$ at time step $j$
@@ -240,4 +194,21 @@ can we decompose to try to lower variance a bit more?
 \end{itemize}
 \end{frame}
 
-    
+\begin{frame}{\subsecname Semi-Supervised Training}
+\begin{itemize}
+\item Add the conditional likelihood of supervised summaries to the objective
+\item They do not train $p_\theta(\bx\mid\by)$ on the supervised data. What's an argument for and against this?
+\end{itemize}
+\end{frame}    
+
+
+\begin{frame}
+{\subsecname Results}
+\begin{itemize}
+\item Semi-supervised saw some benefit over supervised for extractive summarization when very using very little supervision
+\item Semi-supervised provided more consistently some benefit over purely supervised for abstractive summarization
+\item Why?
+\end{itemize}
+\end{frame}    
+
+
