@@ -70,9 +70,6 @@ to reconstruct the original source sentence $\bx$
 \bd_k &= \bv_k^TH^c\\
 p_\theta(\bx_k\mid\bx_{<k}, \by) &= \textrm{softmax}(W \bd_k)
 \end{align}
-\item (7) is quite strange, since it does not use the recurrent state.
-My guess is that it is a mistake from following the pointer network
-paper too closely (this is equation (10) in the paper).
 \end{itemize}
 \end{frame}
 
