@@ -4,7 +4,7 @@ TEX=cvae.tex
 BIB=*.bib
 
 # Core compilation commands
-CC=latexmk
+CC=latexmk -pdflatex="pdflatex --shell-escape %O %S"
 BB=bibtex
 FLAGS="-pdf"
 

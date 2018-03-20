@@ -36,6 +36,7 @@
 \usepackage{tikz,etoolbox}
 \usepackage{tikz,amsmath,siunitx}
 \usetikzlibrary{arrows,snakes,backgrounds,patterns,matrix,shapes,fit,calc,shadows,plotmarks}
+\usepackage{svg}
 
 \usepackage{subcaption}
 % \usepackage{url}
@@ -160,7 +161,7 @@
 \newcommand{\wvec}{\mathbf{w}}
 \renewcommand{\c}{\mathbf{c}}
 \newcommand{\zvec}{\mathbf{z}}
-\newcommand{\E}{\mathbbm{E}}
+\newcommand{\E}[2]{\mathbbm{E}_{#1}\left[#2\right]}
 
 \newcommand{\mcD}{\mathcal{D}}
 
@@ -192,6 +193,17 @@
 \newcommand{\boldw}{\boldsymbol{w}}
 \newcommand{\xvec}{\mathbf{x}}
 
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bh}{\mathbf{h}}
+\newcommand{\bc}{\mathbf{c}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bs}{\mathbf{s}}
+\newcommand{\bt}{\mathbf{t}}
+\newcommand{\bd}{\mathbf{d}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bv}{\mathbf{v}}
+
 \newcommand{\boldu}{\boldsymbol{u}}
 \newcommand{\boldv}{\boldsymbol{v}}
 \newcommand{\boldb}{\boldsymbol{b}}
@@ -200,8 +212,8 @@
 \newcommand{\boldg}{\boldsymbol{g}}
 \newcommand{\ua}{\ensuremath{\mathrm{a}}}
 \newcommand{\up}{\ensuremath{\mathrm{p}}}
-%\newcommand{\bphi}{\ensuremath{\mathbf{\phi}}}
-\newcommand{\bphi}{\boldsymbol{\phi}}
+%\newcommand{\bphi}{\ensuremath{\mathbf{\lambda}}}
+\newcommand{\bphi}{\boldsymbol{\lambda}}
 \newcommand{\btheta}{\boldsymbol{\theta}}
 \newcommand{\mcY}{\mathcal{Y}}
 \newcommand{\mcX}{\mathcal{X}}
@@ -213,10 +225,10 @@
 \def\argmax{\operatornamewithlimits{arg\,max}}
 \newcommand{\reals}{\ensuremath{\mathbb{R}}}
 
-\newcommand{\aphi}{\boldsymbol{\phi}_{\mathrm{a}}}
-\newcommand{\pwphi}{\boldsymbol{\phi}_{\mathrm{p}}}
-\newcommand{\squigaphi}{\widetilde{\boldsymbol{\phi}}_{\mathrm{a}}}
-\newcommand{\squigpwphi}{\widetilde{\boldsymbol{\phi}}_{\mathrm{p}}}
+\newcommand{\aphi}{\boldsymbol{\lambda}_{\mathrm{a}}}
+\newcommand{\pwphi}{\boldsymbol{\lambda}_{\mathrm{p}}}
+\newcommand{\squigaphi}{\widetilde{\boldsymbol{\lambda}}_{\mathrm{a}}}
+\newcommand{\squigpwphi}{\widetilde{\boldsymbol{\lambda}}_{\mathrm{p}}}
 
 \newcommand{\aW}{\boldW_{\mathrm{\ua}}}
 \newcommand{\pW}{\boldW_{\mathrm{\up}}}
@@ -268,9 +280,227 @@
    
 \begin{itemize}
 \item Semi-supervised summarization
-\item Uses a sequence of words as the latent representation $z$ in a VAE
-\item Builds on \cite{kingma2014}, using M1 (the unsupervised VAE)
-        and M2 (the semisupervised version)
+\item Builds on \cite{kingma2014}'s M2 (the semisupervised version)
+\item But uses a sequence of words as the latent representation
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{The Idea for Extractive Summarization}
+\end{center}
+\begin{itemize}
+\item Start with source sentence $\bx =$ `I wish I could love dogs but I just hate them'
+\item Sample a summary $\by =$ `I love dogs' by picking words from the source
+\item Reconstruct the source sentence given the summary using an attentive decoder
+\item Use the probability of the source sentence under the reconstruction decoder
+(and a couple other terms) as signal for how good the summary was
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Auto-Encoding Sentence Compression}
+\end{center}
+\center
+\includegraphics[scale=0.5]{img/aec.pdf}
+Note: Some of the parameters of the inference network
+are used as the decoder network's encoder, but the shared parameters are not updated
+using gradients from the decoder
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Auto-Encoding Sentence Compression}
+\end{center}
+\begin{itemize}
+\item The inference network $q_\lambda(\by\mid\bx)$
+uses hard attention at every timestep to select a source token
+\item Use a bidirectional source encoder on $\bx$ to get source embedding matrix
+$H^e = \textrm{BRNN}(\bx)$, whose $i$th element is the vector $\bh_i^e$.
+\item Select source token $\bx_i$ with a pointer network `compressor'
+\begin{align}
+\bh_j^c &= \textrm{RNN}(\bh_{j-1}^c, \by_{j-1})\\
+\bu_j &= \textrm{attention}(\bh_j^c, H^e)\\
+\by_j &\sim \textrm{Cat}(\bu_j)
+\end{align}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{ASC Continued}
+\end{center}
+\begin{itemize}
+\item Let $H^c$ be the concatenation of all the compressor hidden states
+\item The decoder $p_\theta(\bx\mid\by)$
+is a conditional language model that attends over the hidden states $H^c$ 
+to reconstruct the original source sentence $\bx$
+\begin{align}
+\bh_k^d &= \textrm{RNN}(\bh_{k-1}^d, \bx_{k-1})\\
+\bv_k &= \textrm{attention}(\bh_k^d, H^c)\\
+\bd_k &= \bv_k^TH^c\\
+p_\theta(\bx_k\mid\bx_{<k}, \by) &= \textrm{softmax}(W \bd_k)
+\end{align}
+\item (7) is quite strange, since it does not use the recurrent state.
+My guess is that it is a mistake from following the pointer network
+paper too closely (this is equation (10) in the paper).
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Details and Recap}
+\end{center}
+\begin{itemize}
+\item The attention is the attention formulation from \cite{Vinyals2015a},
+which is pretty close to the `general' attention in \cite{Luong2015}
+\begin{equation}
+\textrm{attention}(q, C) = \textrm{softmax}(\bv^T\textrm{tanh}(Wq + VC))
+\end{equation}
+\item $p_\theta(\bx\mid\by)$ is the reconstructive attention based decoder
+\item $q_\lambda(\by\mid\bx)$ is the summarizing pointer network,
+and we omit the conditioning on $\bx$ when convenient (randomly)
+\item $p(\by)$ is a language model prior
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Marginal Likelihood}
+\end{center}
+\begin{itemize}
+\item The inference network's parameters will be denoted by $\lambda$
+and the decoder network's by $\theta$
+\item As usual, the marginal likelihood is intractable
+\begin{equation}
+\log p(\bx) = \log \sum_\by p_\theta(\bx, \by)
+\end{equation}
+since we cannot enumerate all possible summaries, even if they are extractive
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Objective}
+\end{center}
+\begin{itemize}
+\item So we lower bound it with Jensen's inequality and maximize the ELBO $\mathcal{L}$
+\begin{align}
+\log\sum_\by p(\bx, \by) &= \log\sum_\by q_\lambda(\by) \frac{p_\theta(\bx, \by)}{q_\lambda(\by)}\\
+&= \log \E{\by\sim q_\lambda(\by)}{\frac{p_\theta(\bx, \by)}{q_\lambda(\by)}}\\
+&\geq \E{\by\sim q_\lambda(\by)}{\log\frac{p_\theta(\bx, \by)}{q_\lambda(\by)}}\\
+&= \E{\by\sim q_\lambda(\by)}{\log p_\theta(\bx\mid\by)} \\
+&\qquad - D_{KL}(q_\lambda(\by) \Vert p(\by))\nonumber\\
+&= \mathcal{L} \nonumber
+\end{align}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Training Details}
+\end{center}
+\begin{itemize}
+\item The gradient of the ELBO with respect to the reconstructive decoder only
+depends on $p_\theta(\bx\mid\by)$
+\begin{equation*}
+\mathcal{L} = \underbrace{
+        \E{\by\sim q_\lambda(\by)}{\log  p_\theta(\bx \mid \by)}
+}_{\text{1. Reconstruction}} - \underbrace{
+        KL[q_{\lambda^{}}(\zvec) \Vert p(\zvec^{})]
+}_{\text{2. Regularization towards prior}}
+\end{equation*}
+\item It's given by term 1
+\begin{align}
+\nabla_\theta \mathcal{L} &=
+\nabla_\theta \E{\by\sim q_\lambda(\by)}{\log  p_\theta(\bx \mid \by)}\\
+&\approx \frac{1}{M}\sum_m \nabla_\theta\log p_\theta(\bx\mid\by^{(m)})
+\end{align}
+where $M$ sample summaries are generated through ancestral sampling
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Training Details}
+\end{center}
+\begin{itemize}
+\item The gradient with respect to the inference network requires REINFORCE
+\item We rewrite the ELBO
+\begin{align}
+\mathcal{L} &= \E{\by\sim q_\lambda(\by)}{\log \frac{p_\theta(\bx,\by)}{q_\lambda(\by)}}\\
+&= \E{\by\sim q_\lambda(\by)}{\log p_\theta(\bx\mid\by) + \log p(\by) - \log q_\lambda(\by)}\\
+&= \E{\by\sim q_\lambda(\by)}{l(\bx,\by)}
+\end{align}
+\item So we have $l(\bx, \by) = \log p_\theta(\bx\mid\by) + \log p(\by) - \log q_\lambda(\by)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{REINFORCE}
+\end{center}
+\begin{itemize}
+\item Recall the score function gradient estimator
+\begin{equation}
+p(\bx)\nabla \log p(\bx) = \nabla p(\bx)
+\end{equation}
+\item We use this to find an approximation of 
+\begin{align}
+\nabla_\lambda \mathcal{L} &= \nabla_\lambda\E{\by\sim q_\lambda(\by)}{l(\bx,\by)}\\
+&= \sum_\by l(\bx,\by)\nabla_\lambda q_\lambda(\by)\\
+&= \sum_\by q_\lambda(\by)l(\bx,\by)\nabla_\lambda\log q_\lambda(\by) )\\
+&= \E{\by\sim q_\lambda(\by)}{l(\bx,\by) \nabla_\lambda\log q_\lambda(\by)}
+\end{align}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\structure{Details}
+\end{center}
+\begin{itemize}
+\item They also train a baseline to predict $l(\bx,\by)$ for variance reduction
+\item They use a variant of KL annealing, and augment the loss as follows
+$$l(\bx, \by) = \log p_\theta(\bx\mid\by) + \lambda(\log p(\by) - \log q_\lambda(\by))$$
+with $\lambda = 0.1$ without justification, but note that increasing $\lambda$ results
+in shorter summaries $\by$ since the prior $p(\by)$ prefers shorter sequences
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+\structure{Questions}
+\end{center}
+\begin{itemize}
+\item Why don't we use
+$$\log\sum_\by p(\by)p_\theta(\bx\mid\by) \geq \sum_\by \E{\by\sim p(\by)}{\log p_\theta(\bx\mid\by)}$$
+instead of introducing $q_\lambda(\by)$ if we're using REINFORCE anyway?
+\item Which parts of the reward
+$$l(\bx, \by) = \log p_\theta(\bx\mid\by) + \log p(\by) - \log q_\lambda(\by\mid\bx)$$
+can we decompose to try to lower variance a bit more?
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+\structure{Connection to MIXER}
+\end{center}
+\begin{itemize}
+\item lol
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\begin{center}
+\structure{Title}
+\end{center}
+\begin{itemize}
+\item lol
 \end{itemize}
 \end{frame}
 
